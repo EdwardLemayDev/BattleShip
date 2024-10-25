@@ -23,10 +23,10 @@
 			src: '/tailwindcss-logotype-white.svg',
 			alt: 'Tailwindcss official white logo'
 		});
-		static readonly EDWARD = new IntroStage({
-			color: '#D60000',
+		static readonly CREATOR = new IntroStage({
+			color: '#BA2D2D',
 			tag: 'by',
-			src: '',
+			src: '/edle-v1.svg',
 			alt: 'Personal logo from creator Edward'
 		});
 
@@ -56,7 +56,7 @@
 		await sleep(delay);
 		stage = IntroStage.TAILWIND;
 		await sleep(delay);
-		stage = IntroStage.EDWARD;
+		stage = IntroStage.CREATOR;
 		await sleep(delay);
 		introDone();
 	});
