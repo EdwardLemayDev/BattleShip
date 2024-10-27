@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import StageElement from '$lib/components/StageElement.svelte';
 	import { ANIMATION_DURATION } from '$lib/const';
 	import { debounce } from '$lib/utils/debounce';
 	import { sleep } from '$lib/utils/sleep';
@@ -51,7 +52,7 @@
 	let skipNoticed = $state(false);
 
 	onMount(async () => {
-		const delay = 2000 + ANIMATION_DURATION;
+		const delay = 1500 + ANIMATION_DURATION;
 
 		await sleep(delay);
 		stage = IntroStage.TAILWIND;
@@ -63,44 +64,44 @@
 </script>
 
 <svelte:window
-	onclick={debounce(300, () => {
+	onclick={debounce(250, () => {
 		if (!skipNoticed) {
 			skipNoticed = true;
+			setTimeout(() => {
+				skipNoticed = false;
+			}, 1500);
 			return;
 		}
 		introDone();
 	})}
 />
 
-<div
-	class="relative flex h-full select-none items-center justify-center overflow-hidden"
-	transition:blur={{ duration: ANIMATION_DURATION }}
->
-	<div class="flex h-52 w-full max-w-3xl items-start gap-2">
-		<h1 class="flex w-28 gap-1.5 overflow-hidden whitespace-pre text-xl font-bold text-neutral-500">
-			<span>Made</span>
-			<span class="relative">
-				{#key stage}
-					<span
-						style="--accentColor: {stage.color}"
-						class="absolute left-0 top-0 text-[--accentColor] underline underline-offset-2"
-						in:fly={{ duration: ANIMATION_DURATION, y: -50 }}
-						out:fly={{ duration: ANIMATION_DURATION, y: 50 }}
-					>
-						{stage.tag}
-					</span>
-				{/key}
-			</span>
-		</h1>
-		<div class="relative h-full flex-grow overflow-hidden">
+<StageElement>
+	<div class="flex h-44 w-full max-w-3xl select-none gap-2">
+		<div class="w-28">
+			<h1 class="overflow-hidden whitespace-pre text-xl font-bold text-neutral-500">
+				<span>Made</span>
+				<span class="inline-grid grid-cols-1 grid-rows-1">
+					{#key stage}
+						<span
+							style="--color:{stage.color}"
+							class="col-start-1 row-start-1 text-[--color] underline underline-offset-2"
+							in:fly={{ duration: ANIMATION_DURATION, y: -50 }}
+							out:fly={{ duration: ANIMATION_DURATION, y: 50 }}
+						>
+							{stage.tag}
+						</span>
+					{/key}
+				</span>
+			</h1>
+		</div>
+		<div class="grid flex-grow grid-cols-1 grid-rows-1">
 			{#key stage}
-				<div class="absolute left-0 top-1/2 w-full -translate-y-1/2">
-					<img
-						class="w-full"
-						src={stage.src}
-						alt={stage.alt}
-						transition:blur={{ duration: ANIMATION_DURATION }}
-					/>
+				<div
+					class="col-start-1 row-start-1 grid w-full place-items-center"
+					transition:blur={{ duration: ANIMATION_DURATION }}
+				>
+					<img class="w-full" src={stage.src} alt={stage.alt} draggable="false" />
 				</div>
 			{/key}
 		</div>
@@ -113,4 +114,4 @@
 			Click to skip
 		</p>
 	{/if}
-</div>
+</StageElement>

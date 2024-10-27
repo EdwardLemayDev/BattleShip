@@ -1,6 +1,8 @@
 <script lang="ts">
+	import StageRoot from '$lib/components/StageRoot.svelte';
 	import Intro from '$lib/layout/Intro.svelte';
 	import Loading from '$lib/layout/Loading.svelte';
+	import Menu from '$lib/layout/Menu.svelte';
 	import { GameLogic, GameStage } from '$lib/logic/Game.svelte';
 	import { onMount } from 'svelte';
 
@@ -12,10 +14,10 @@
 </script>
 
 <svelte:head>
-	<title>BattleShip</title>
+	<title>Battleship</title>
 </svelte:head>
 
-<div class="absolute inset-0 bg-neutral-950 text-neutral-50">
+<StageRoot>
 	{#if game.stage === GameStage.LOADING}
 		<Loading />
 	{:else if game.stage === GameStage.INTRO}
@@ -24,5 +26,7 @@
 				game.stage = GameStage.MENU;
 			}}
 		/>
+	{:else if game.stage === GameStage.MENU}
+		<Menu />
 	{/if}
-</div>
+</StageRoot>
