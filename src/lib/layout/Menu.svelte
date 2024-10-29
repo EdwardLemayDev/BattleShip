@@ -19,7 +19,7 @@
 </script>
 
 <script lang="ts">
-	let page = $state(MENU_PAGE.HOME);
+	let page = $state.raw(MENU_PAGE.HOME);
 </script>
 
 {#snippet MenuItem(content: string, onclick?: () => void)}
