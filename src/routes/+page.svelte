@@ -14,6 +14,17 @@
 	const game = new GameLogic();
 	const devConfig = new DevConfig();
 
+	const CurrentStage = $derived.by(() => {
+		switch (game.stage) {
+			case 'LOADING':
+				return Loading;
+			case 'INTRO':
+				return Intro;
+			case 'MENU':
+				return Menu;
+		}
+	});
+
 	onMount(() => {
 		if (dev && devConfig.skipIntro) {
 			game.introCompleted();
@@ -32,11 +43,5 @@
 {/if}
 
 <StageRoot>
-	{#if game.stage === 'LOADING'}
-		<Loading />
-	{:else if game.stage === 'INTRO'}
-		<Intro />
-	{:else if game.stage === 'MENU'}
-		<Menu />
-	{/if}
+	<CurrentStage />
 </StageRoot>

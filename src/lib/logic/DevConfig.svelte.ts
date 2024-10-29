@@ -4,7 +4,7 @@ const CONTEXT_KEY = Symbol();
 
 const DEV_KEYS = Object.freeze({
 	SKIP_INTRO: 'skip_intro'
-});
+} as const);
 
 export class DevConfig {
 	static fromContext(): DevConfig | never {

@@ -33,7 +33,7 @@
 			src: '/edle-v1.svg',
 			alt: 'Personal logo from creator Edward'
 		}
-	} satisfies Record<string, IntroStage>);
+	} as const);
 </script>
 
 <script lang="ts">

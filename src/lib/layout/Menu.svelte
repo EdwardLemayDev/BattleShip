@@ -15,11 +15,11 @@
 		PLAY: {
 			title: 'Play'
 		}
-	} satisfies Record<string, MenuPage>);
+	} as const);
 </script>
 
 <script lang="ts">
-	let page = $state.raw(MENU_PAGE.HOME);
+	let page: MenuPage = $state.raw(MENU_PAGE.HOME);
 </script>
 
 {#snippet MenuItem(content: string, onclick?: () => void)}
