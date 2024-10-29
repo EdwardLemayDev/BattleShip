@@ -5,17 +5,21 @@
 	import Intro from '$lib/layout/Intro.svelte';
 	import Loading from '$lib/layout/Loading.svelte';
 	import Menu from '$lib/layout/Menu.svelte';
-	import { initDevConfig } from '$lib/logic/DevConfig.svelte';
-	import { GameLogic, GameStage } from '$lib/logic/Game.svelte';
+	import { DevConfig } from '$lib/logic/DevConfig.svelte';
+	import { GameLogic } from '$lib/logic/Game.svelte';
 	import { onMount } from 'svelte';
 </script>
 
 <script lang="ts">
 	const game = new GameLogic();
-	initDevConfig();
+	const devConfig = new DevConfig();
 
 	onMount(() => {
-		game.stage = GameStage.INTRO;
+		if (dev && devConfig.skipIntro) {
+			game.introCompleted();
+		} else {
+			game.loaded();
+		}
 	});
 </script>
 
@@ -28,15 +32,11 @@
 {/if}
 
 <StageRoot>
-	{#if game.stage === GameStage.LOADING}
+	{#if game.stage === 'LOADING'}
 		<Loading />
-	{:else if game.stage === GameStage.INTRO}
-		<Intro
-			onIntroDone={() => {
-				game.stage = GameStage.MENU;
-			}}
-		/>
-	{:else if game.stage === GameStage.MENU}
+	{:else if game.stage === 'INTRO'}
+		<Intro />
+	{:else if game.stage === 'MENU'}
 		<Menu />
 	{/if}
 </StageRoot>
