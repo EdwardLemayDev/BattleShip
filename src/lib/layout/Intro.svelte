@@ -1,73 +1,57 @@
 <script lang="ts" module>
-	import { dev } from '$app/environment';
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { ANIMATION_DURATION } from '$lib/const';
-	import { useDevConfig } from '$lib/logic/DevConfig.svelte';
+	import { GameLogic } from '$lib/logic/Game.svelte';
 	import { debounce } from '$lib/utils/debounce';
 	import { sleep } from '$lib/utils/sleep';
 	import { onMount } from 'svelte';
 	import { blur, fly } from 'svelte/transition';
 
-	export type IntroProps = {
-		onIntroDone: () => void;
-	};
-
-	export class IntroStage {
-		static readonly SVELTE = new IntroStage({
-			color: '#ff3e00',
-			tag: 'with',
-			src: '/svelte-horizontal.svg',
-			alt: 'Svelte official horizontal logo'
-		});
-		static readonly TAILWIND = new IntroStage({
-			color: '#38bdf8',
-			tag: 'with',
-			src: '/tailwindcss-logotype-white.svg',
-			alt: 'Tailwindcss official white logo'
-		});
-		static readonly CREATOR = new IntroStage({
-			color: '#BA2D2D',
-			tag: 'by',
-			src: '/edle-v1.svg',
-			alt: 'Personal logo from creator Edward'
-		});
-
+	export type IntroStage = {
 		color: string;
 		tag: string;
 		src: string;
 		alt: string;
+	};
 
-		private constructor(config: { color: string; tag: string; src: string; alt: string }) {
-			this.color = config.color;
-			this.tag = config.tag;
-			this.src = config.src;
-			this.alt = config.alt;
+	export const INTRO_STAGE = Object.freeze({
+		SVELTE: {
+			color: '#ff3e00',
+			tag: 'with',
+			src: '/svelte-horizontal.svg',
+			alt: 'Svelte official horizontal logo'
+		},
+		TAILWINDCSS: {
+			color: '#38bdf8',
+			tag: 'with',
+			src: '/tailwindcss-logotype-white.svg',
+			alt: 'Tailwindcss official white logo'
+		},
+		CREATOR: {
+			color: '#BA2D2D',
+			tag: 'by',
+			src: '/edle-v1.svg',
+			alt: 'Personal logo from creator Edward'
 		}
-	}
+	} satisfies Record<string, IntroStage>);
 </script>
 
 <script lang="ts">
-	let { onIntroDone: introDone }: IntroProps = $props();
+	const game = GameLogic.fromContext();
 
 	let stage: IntroStage | null = $state.raw(null);
 	let skipNoticed: boolean = $state(false);
 
-	const devConfig = useDevConfig();
-
 	onMount(async () => {
-		if (dev) {
-			if (devConfig?.skipIntro) introDone();
-		}
-
 		const delay = 1500 + ANIMATION_DURATION;
 
-		stage = IntroStage.SVELTE;
+		stage = INTRO_STAGE.SVELTE;
 		await sleep(delay);
-		stage = IntroStage.TAILWIND;
+		stage = INTRO_STAGE.TAILWINDCSS;
 		await sleep(delay);
-		stage = IntroStage.CREATOR;
+		stage = INTRO_STAGE.CREATOR;
 		await sleep(delay);
-		introDone();
+		game.introCompleted();
 	});
 </script>
 
@@ -80,7 +64,7 @@
 			}, 2500);
 			return;
 		}
-		introDone();
+		game.introCompleted();
 	})}
 />
 

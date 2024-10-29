@@ -1,9 +1,9 @@
 <script lang="ts" module>
-	import { useDevConfig } from '$lib/logic/DevConfig.svelte';
+	import { DevConfig } from '$lib/logic/DevConfig.svelte';
 </script>
 
 <script lang="ts">
-	const devConfig = useDevConfig();
+	const devConfig = DevConfig.fromContext();
 </script>
 
 {#if devConfig}

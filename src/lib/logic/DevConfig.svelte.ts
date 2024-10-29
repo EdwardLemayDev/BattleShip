@@ -1,33 +1,23 @@
-import { dev } from '$app/environment';
-import { getContext, setContext } from 'svelte';
+import { getContext, hasContext, setContext } from 'svelte';
 
-const DEV_CONFIG_KEY = Symbol();
+const CONTEXT_KEY = Symbol();
 
 const DEV_KEYS = Object.freeze({
 	SKIP_INTRO: 'skip_intro'
 });
 
-export function initDevConfig() {
-	if (dev) {
-		return setContext(DEV_CONFIG_KEY, new DevConfig());
-	} else {
-		return undefined;
+export class DevConfig {
+	static fromContext(): DevConfig | never {
+		if (hasContext(CONTEXT_KEY)) return getContext<DevConfig>(CONTEXT_KEY);
+		throw new Error('DevConfig was not initialized yet');
 	}
-}
 
-export function useDevConfig() {
-	if (dev) {
-		return getContext(DEV_CONFIG_KEY) as DevConfig;
-	} else {
-		return undefined;
-	}
-}
-
-class DevConfig {
 	menuOpened: boolean = $state(false);
 	skipIntro: boolean = $state(false);
 
 	constructor() {
+		setContext(CONTEXT_KEY, this);
+
 		if (typeof window !== 'undefined') {
 			this.skipIntro = JSON.parse(localStorage.getItem(DEV_KEYS.SKIP_INTRO) ?? 'false');
 			$effect(() => {
