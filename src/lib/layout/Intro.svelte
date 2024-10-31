@@ -1,6 +1,6 @@
 <script lang="ts" module>
 	import StageElement from '$lib/components/StageElement.svelte';
-	import { ANIMATION_DURATION } from '$lib/const';
+	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
 	import { GameLogic } from '$lib/logic/Game.svelte';
 	import { debounce } from '$lib/utils/debounce';
 	import { sleep } from '$lib/utils/sleep';
@@ -34,6 +34,8 @@
 			alt: 'Personal logo from creator Edward'
 		}
 	} as const);
+
+	const INTRO_ANIMATION_DURATION = GLOBAL_ANIMATION_DURATION * 2;
 </script>
 
 <script lang="ts">
@@ -43,7 +45,7 @@
 	let skipNoticed: boolean = $state(false);
 
 	onMount(async () => {
-		const delay = 1500 + ANIMATION_DURATION;
+		const delay = 1500 + INTRO_ANIMATION_DURATION;
 
 		stage = INTRO_STAGE.SVELTE;
 		await sleep(delay);
@@ -79,8 +81,8 @@
 							<span
 								style="--color:{stage.color}"
 								class="col-start-1 row-start-1 text-[--color] underline underline-offset-2"
-								in:fly={{ duration: ANIMATION_DURATION, y: -50 }}
-								out:fly={{ duration: ANIMATION_DURATION, y: 50 }}
+								in:fly={{ duration: INTRO_ANIMATION_DURATION, y: -50 }}
+								out:fly={{ duration: INTRO_ANIMATION_DURATION, y: 50 }}
 							>
 								{stage.tag}
 							</span>
@@ -92,7 +94,7 @@
 				{#key stage}
 					<div
 						class="col-start-1 row-start-1 grid w-full place-items-center"
-						transition:blur={{ duration: ANIMATION_DURATION }}
+						transition:blur={{ duration: INTRO_ANIMATION_DURATION }}
 					>
 						<img class="w-full" src={stage.src} alt={stage.alt} draggable="false" />
 					</div>
@@ -102,7 +104,7 @@
 		{#if skipNoticed}
 			<p
 				class="absolute bottom-0 left-0 select-none p-6 text-xl font-bold text-neutral-300"
-				transition:fly={{ duration: ANIMATION_DURATION, y: 50 }}
+				transition:fly={{ duration: INTRO_ANIMATION_DURATION, y: 50 }}
 			>
 				Click <span class="underline">again</span> to skip
 			</p>

@@ -1,75 +1,132 @@
 <script lang="ts" module>
+	import MenuButton from '$lib/components/MenuButton.svelte';
+	import MenuPage, { type MenuPageProps } from '$lib/components/MenuPage.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
 
-	export type MenuPage = {
+	export type MenuPageData = {
 		title: string;
+		size?: MenuPageProps['titleSize'];
 	};
 
 	export const MENU_PAGE = Object.freeze({
 		HOME: {
-			title: 'Battleship'
+			title: 'Battleship',
+			size: 'lg'
+		},
+		JOIN: {
+			title: 'Join Game'
+		},
+		SETTINGS: {
+			title: 'Settings'
 		},
 		ABOUT: {
 			title: 'About'
-		},
-		PLAY: {
-			title: 'Play'
 		}
 	} as const);
 </script>
 
 <script lang="ts">
-	let page: MenuPage = $state.raw(MENU_PAGE.HOME);
+	let page: MenuPageData = $state.raw(MENU_PAGE.HOME);
+
+	const CurrentPage = $derived.by(() => {
+		switch (page) {
+			case MENU_PAGE.HOME:
+				return HomePage;
+			case MENU_PAGE.JOIN:
+				return JoinPage;
+			case MENU_PAGE.SETTINGS:
+				return SettingsPage;
+			case MENU_PAGE.ABOUT:
+				return AboutPage;
+		}
+	});
 </script>
 
-{#snippet MenuItem(content: string, onclick?: () => void)}
-	<li class="w-3/4 overflow-hidden first:rounded-t-lg last:rounded-b-lg">
-		<button
-			class="group relative w-full overflow-hidden bg-neutral-800 px-2 py-3 text-3xl font-semibold transition-[filter] hover:brightness-110"
-			{onclick}
-		>
-			<p class="transition-transform group-active:scale-90">
-				{content}
-			</p>
-			<span
-				class="absolute left-1/2 top-0 flex h-1 w-24 -translate-x-1/2 justify-start overflow-hidden rounded-b-full bg-neutral-900/60"
-			>
-				<span class="h-full w-0 bg-red-900 transition-[width] group-hover:w-full"></span>
-			</span>
-			<span
-				class="absolute bottom-0 left-1/2 flex h-1 w-24 -translate-x-1/2 justify-end overflow-hidden rounded-t-full bg-neutral-900/60"
-			>
-				<span class="h-full w-0 bg-red-900 transition-[width] group-hover:w-full"></span>
-			</span>
-		</button>
-	</li>
+{#snippet HomePage()}
+	<!-- New Game will change from Menu to Lobby instead of being a page -->
+	<MenuButton size="lg">New Game</MenuButton>
+	<MenuButton
+		size="lg"
+		onclick={() => {
+			page = MENU_PAGE.JOIN;
+		}}>Join Game</MenuButton
+	>
+	<!-- Might change Settings to be a component to be accessible during game -->
+	<MenuButton
+		size="lg"
+		onclick={() => {
+			page = MENU_PAGE.SETTINGS;
+		}}>Settings</MenuButton
+	>
+	<MenuButton
+		size="lg"
+		onclick={() => {
+			page = MENU_PAGE.ABOUT;
+		}}>About</MenuButton
+	>
 {/snippet}
 
-<StageElement>
-	<div class="flex min-h-64 w-full max-w-lg select-none flex-col gap-10">
-		<h1 class="text-center text-6xl font-bold">{page.title}</h1>
-		<div class="grid flex-grow grid-cols-1 grid-rows-1">
-			{#key page}
-				<ul class="col-start-1 row-start-1 flex flex-col items-center gap-2">
-					{#if page === MENU_PAGE.HOME}
-						{@render MenuItem('Play', () => {
-							page = MENU_PAGE.PLAY;
-						})}
-						{@render MenuItem('About', () => {
-							page = MENU_PAGE.ABOUT;
-						})}
-					{:else if page === MENU_PAGE.ABOUT}
-						{@render MenuItem('Back', () => {
-							page = MENU_PAGE.HOME;
-						})}
-					{:else if page === MENU_PAGE.PLAY}
-						{@render MenuItem('PvE')}
-						{@render MenuItem('Back', () => {
-							page = MENU_PAGE.HOME;
-						})}
-					{/if}
-				</ul>
-			{/key}
-		</div>
+{#snippet JoinPage()}
+	<div
+		class="mb-2 flex flex-col gap-2 rounded-md border border-neutral-800 p-2 text-center text-lg font-bold"
+	>
+		<p class="select-none">Enter Game Code to join</p>
+		<p>[GAME CODE INPUT]</p>
 	</div>
-</StageElement>
+	<div class="grid grid-cols-2 gap-1">
+		<MenuButton
+			onclick={() => {
+				page = MENU_PAGE.HOME;
+			}}>Back</MenuButton
+		>
+		<MenuButton>Join</MenuButton>
+	</div>
+{/snippet}
+
+{#snippet SettingsPage()}
+	<div
+		class="mb-2 grid select-none grid-cols-2 gap-2 rounded-md border border-neutral-800 p-2 text-center text-lg font-bold"
+	>
+		<p>[SETTINGS OPTIONS]</p>
+		<p>[SETTINGS OPTIONS]</p>
+		<p>[SETTINGS OPTIONS]</p>
+		<p>[SETTINGS OPTIONS]</p>
+		<p>[SETTINGS OPTIONS]</p>
+		<p>[SETTINGS OPTIONS]</p>
+		<p>[SETTINGS OPTIONS]</p>
+		<p>[SETTINGS OPTIONS]</p>
+	</div>
+	<div class="grid grid-cols-2 gap-1">
+		<MenuButton
+			onclick={() => {
+				page = MENU_PAGE.HOME;
+			}}>Back</MenuButton
+		>
+		<MenuButton>Save</MenuButton>
+	</div>
+{/snippet}
+
+{#snippet AboutPage()}
+	<div class="mb-2 flex flex-col gap-2 rounded-md border border-neutral-800 p-4 text-lg font-bold">
+		<p>
+			Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero unde at corrupti mollitia
+			doloremque ducimus est, delectus neque praesentium quo aperiam enim vitae accusamus.
+			Recusandae beatae repellat dolor velit molestiae.
+		</p>
+		<p>
+			Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis vel cupiditate doloribus
+			quis quisquam eius quaerat in nihil.
+		</p>
+	</div>
+	<MenuButton
+		onclick={() => {
+			page = MENU_PAGE.HOME;
+		}}>Back</MenuButton
+	>
+{/snippet}
+
+{#key page}
+	<StageElement>
+		<MenuPage title={page.title} titleSize={page.size} children={CurrentPage} />
+	</StageElement>
+{/key}
