@@ -2,6 +2,7 @@
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import MenuPage, { type MenuPageProps } from '$lib/components/MenuPage.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
+	import { GameLogic } from '$lib/logic/Game.svelte';
 
 	export type MenuPageData = {
 		title: string;
@@ -26,6 +27,8 @@
 </script>
 
 <script lang="ts">
+	const game = GameLogic.fromContext();
+
 	let page: MenuPageData = $state.raw(MENU_PAGE.HOME);
 
 	const CurrentPage = $derived.by(() => {
@@ -44,26 +47,39 @@
 
 {#snippet HomePage()}
 	<!-- New Game will change from Menu to Lobby instead of being a page -->
-	<MenuButton size="lg">New Game</MenuButton>
+	<MenuButton
+		size="lg"
+		onclick={() => {
+			game.createLobby();
+		}}
+	>
+		New Game
+	</MenuButton>
 	<MenuButton
 		size="lg"
 		onclick={() => {
 			page = MENU_PAGE.JOIN;
-		}}>Join Game</MenuButton
+		}}
 	>
+		Join Game
+	</MenuButton>
 	<!-- Might change Settings to be a component to be accessible during game -->
 	<MenuButton
 		size="lg"
 		onclick={() => {
 			page = MENU_PAGE.SETTINGS;
-		}}>Settings</MenuButton
+		}}
 	>
+		Settings
+	</MenuButton>
 	<MenuButton
 		size="lg"
 		onclick={() => {
 			page = MENU_PAGE.ABOUT;
-		}}>About</MenuButton
+		}}
 	>
+		About
+	</MenuButton>
 {/snippet}
 
 {#snippet JoinPage()}
@@ -75,11 +91,14 @@
 	</div>
 	<div class="grid grid-cols-2 gap-1">
 		<MenuButton
+			accent="danger"
 			onclick={() => {
 				page = MENU_PAGE.HOME;
-			}}>Back</MenuButton
+			}}
 		>
-		<MenuButton>Join</MenuButton>
+			Cancel
+		</MenuButton>
+		<MenuButton accent="success">Join</MenuButton>
 	</div>
 {/snippet}
 
@@ -98,11 +117,14 @@
 	</div>
 	<div class="grid grid-cols-2 gap-1">
 		<MenuButton
+			accent="danger"
 			onclick={() => {
 				page = MENU_PAGE.HOME;
-			}}>Back</MenuButton
+			}}
 		>
-		<MenuButton>Save</MenuButton>
+			Cancel
+		</MenuButton>
+		<MenuButton accent="success">Save</MenuButton>
 	</div>
 {/snippet}
 
@@ -121,8 +143,10 @@
 	<MenuButton
 		onclick={() => {
 			page = MENU_PAGE.HOME;
-		}}>Back</MenuButton
+		}}
 	>
+		Back
+	</MenuButton>
 {/snippet}
 
 {#key page}

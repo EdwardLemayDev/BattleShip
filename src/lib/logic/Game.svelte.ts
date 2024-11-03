@@ -2,7 +2,7 @@ import { getContext, hasContext, setContext } from 'svelte';
 
 const CONTEXT_KEY = Symbol();
 
-export type GameStage = 'LOADING' | 'INTRO' | 'MENU';
+export type GameStage = 'LOADING' | 'INTRO' | 'MENU' | 'LOBBY';
 
 export class GameLogic {
 	static fromContext(): GameLogic | never {
@@ -24,5 +24,9 @@ export class GameLogic {
 	}
 	introCompleted() {
 		this.#stage = 'MENU';
+	}
+
+	createLobby() {
+		this.#stage = 'LOBBY';
 	}
 }
