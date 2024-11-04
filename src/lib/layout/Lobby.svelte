@@ -3,5 +3,8 @@
 </script>
 
 <StageElement>
-	<p>LOBBY</p>
+	<div>
+		<h1>New Game</h1>
+		<p>Game lobby</p>
+	</div>
 </StageElement>

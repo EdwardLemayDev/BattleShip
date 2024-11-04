@@ -29,10 +29,11 @@
 	});
 
 	onMount(() => {
-		if (dev && devConfig.skipIntro) {
-			game.introCompleted();
-		} else {
-			game.loaded();
+		game.loaded();
+
+		if (dev) {
+			if (devConfig.skipIntro) game.introCompleted();
+			if (devConfig.newLobby) game.createLobby();
 		}
 	});
 </script>

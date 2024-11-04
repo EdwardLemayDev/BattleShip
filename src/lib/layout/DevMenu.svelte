@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import MenuToggle from '$lib/components/MenuToggle.svelte';
 	import { DevConfig } from '$lib/logic/DevConfig.svelte';
 </script>
 
@@ -6,11 +7,9 @@
 	const devConfig = DevConfig.fromContext();
 </script>
 
-<div class="absolute left-0 top-0 z-10 flex w-32 flex-col gap-1 p-1.5 font-bold text-neutral-200">
+<div class="absolute left-1 top-1 z-10 flex flex-col gap-1 p-1 font-bold text-neutral-200">
 	<button
-		class="inline-flex h-8 w-full items-center justify-center overflow-hidden whitespace-pre rounded-full bg-neutral-800 px-1 py-0.5 font-bold transition-[max-width] {devConfig.menuOpened
-			? 'max-w-28'
-			: 'max-w-8 text-neutral-400'}"
+		class="inline-flex h-8 min-w-8 items-center justify-center overflow-hidden whitespace-pre rounded-full bg-neutral-800 px-1 py-0.5 font-bold"
 		aria-label="Dev menu"
 		onclick={(event) => {
 			event.stopImmediatePropagation();
@@ -23,16 +22,21 @@
 		{/if}
 	</button>
 	{#if devConfig.menuOpened}
-		<button
-			onclick={(event) => {
-				event.stopImmediatePropagation();
-				devConfig.skipIntro = !devConfig.skipIntro;
-			}}
-		>
-			<span> Skip Intro: </span>
-			<span class="underline">
-				{devConfig.skipIntro ? 'On' : 'Off'}
-			</span>
-		</button>
+		<MenuToggle bind:value={devConfig.skipIntro} disabled={devConfig.newLobby}>
+			{#snippet children(value)}
+				<span>Skip Intro:</span>
+				<span class="underline">
+					{value ? 'On' : 'Off'}
+				</span>
+			{/snippet}
+		</MenuToggle>
+		<MenuToggle bind:value={devConfig.newLobby}>
+			{#snippet children(value)}
+				<span>Auto Lobby:</span>
+				<span class="underline">
+					{value ? 'On' : 'Off'}
+				</span>
+			{/snippet}
+		</MenuToggle>
 	{/if}
 </div>
