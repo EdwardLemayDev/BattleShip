@@ -10,12 +10,15 @@
 </script>
 
 <StageElement>
-	<div class="flex flex-col gap-4 rounded-xl border-2 border-neutral-900 p-6">
-		<h1 class="mb-8 select-none text-center text-5xl font-bold tracking-widest text-neutral-400">
+	<div class="flex w-full max-w-xl flex-col items-center gap-4 rounded-xl">
+		<h1 class="mb-4 select-none text-center text-5xl font-bold tracking-widest text-neutral-200">
 			Game Lobby
 		</h1>
 		<GameModeSelect />
 		<GameProfiles />
-		<div class="select-none text-center">-- MAIN MENU --</div>
+		<div class="w-full select-none rounded-md border border-neutral-800 p-2 text-center">
+			<p>MAIN MENU</p>
+			<p>Quit | Bot Difficulty | Invite / Kick | Start</p>
+		</div>
 	</div>
 </StageElement>
