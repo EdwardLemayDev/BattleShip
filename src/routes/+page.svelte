@@ -4,7 +4,7 @@
 	import DevMenu from '$lib/layout/DevMenu.svelte';
 	import Intro from '$lib/layout/Intro.svelte';
 	import Loading from '$lib/layout/Loading.svelte';
-	import Lobby from '$lib/layout/Lobby.svelte';
+	import Lobby from '$lib/layout/Lobby/Lobby.svelte';
 	import Menu from '$lib/layout/Menu.svelte';
 	import { DevConfig } from '$lib/logic/DevConfig.svelte';
 	import { GameLogic } from '$lib/logic/Game.svelte';
