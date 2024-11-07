@@ -1,0 +1,1 @@
+export const GLOBAL_ANIMATION_DURATION = 250;
