@@ -15,17 +15,19 @@ export default function syncStateToLocal<Obj extends Object, Keys extends keyof 
 		obj[key] = getLocal(storageKey, obj[key]);
 		$effect(() => saveLocal(storageKey, obj[key]));
 	}
-	on(window, 'storage', ({ key, newValue, storageArea }) => {
-		if (key === null || newValue === null || storageArea !== localStorage) return;
+	$effect(() =>
+		on(window, 'storage', ({ key, newValue, storageArea }) => {
+			if (key === null || newValue === null || storageArea !== localStorage) return;
 
-		const objKey = key.split(KEY_SEPARATOR)[1] as Keys;
+			const objKey = key.split(KEY_SEPARATOR)[1] as Keys;
 
-		try {
-			obj[objKey] = JSON.parse(newValue);
-		} catch (e) {
-			console.warn(e);
-		}
-	});
+			try {
+				obj[objKey] = JSON.parse(newValue);
+			} catch (e) {
+				console.warn(e);
+			}
+		})
+	);
 }
 
 function getLocal<T>(key: string, fallback: T): T {
