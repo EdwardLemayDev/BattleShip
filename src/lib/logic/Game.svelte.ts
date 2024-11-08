@@ -1,27 +1,18 @@
-import { getContext, hasContext, setContext } from 'svelte';
+import strictContext from '$lib/utils/context';
 
-const CONTEXT_KEY = Symbol();
+const CONTEXT = strictContext<GameLogic>();
 
 export type GameStage = 'LOADING' | 'INTRO' | 'MENU' | 'LOBBY';
 
 export type GameMode = 'Classic' | 'Salvo' | 'Bonus' | 'Special';
 
-export class GameLogic {
-	static fromContext(): GameLogic | never {
-		if (hasContext(CONTEXT_KEY)) return getContext<GameLogic>(CONTEXT_KEY);
-		throw new Error('GameLogic was not initialized yet');
-	}
-
+class GameLogic {
 	#stage: GameStage = $state('LOADING');
 	get stage() {
 		return this.#stage;
 	}
 
 	gameMode: GameMode = $state('Classic');
-
-	constructor() {
-		setContext(CONTEXT_KEY, this);
-	}
 
 	loaded() {
 		this.#stage = 'INTRO';
@@ -33,4 +24,12 @@ export class GameLogic {
 	createLobby() {
 		this.#stage = 'LOBBY';
 	}
+}
+
+export function initGameLogic() {
+	return CONTEXT.set(new GameLogic());
+}
+
+export function useGameLogic() {
+	return CONTEXT.get();
 }

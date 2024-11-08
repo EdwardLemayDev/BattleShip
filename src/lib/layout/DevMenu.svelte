@@ -1,12 +1,12 @@
 <script lang="ts" module>
 	import MenuToggle from '$lib/components/MenuToggle.svelte';
-	import { DevConfig } from '$lib/logic/DevConfig.svelte';
-	import { GameLogic } from '$lib/logic/Game.svelte';
+	import { useDevSettings } from '$lib/logic/DevConfig.svelte';
+	import { useGameLogic } from '$lib/logic/Game.svelte';
 </script>
 
 <script lang="ts">
-	const game = GameLogic.fromContext();
-	const devConfig = DevConfig.fromContext();
+	const game = useGameLogic();
+	const devConfig = useDevSettings();
 </script>
 
 <div

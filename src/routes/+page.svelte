@@ -6,14 +6,14 @@
 	import Loading from '$lib/layout/Loading.svelte';
 	import Lobby from '$lib/layout/Lobby/Lobby.svelte';
 	import Menu from '$lib/layout/Menu.svelte';
-	import { DevConfig } from '$lib/logic/DevConfig.svelte';
-	import { GameLogic } from '$lib/logic/Game.svelte';
+	import { initDevSettings } from '$lib/logic/DevConfig.svelte';
+	import { initGameLogic } from '$lib/logic/Game.svelte';
 	import { onMount } from 'svelte';
 </script>
 
 <script lang="ts">
-	const game = new GameLogic();
-	const devConfig = new DevConfig();
+	const game = initGameLogic();
+	const devConfig = initDevSettings();
 
 	const CurrentStage = $derived.by(() => {
 		switch (game.stage) {

@@ -1,12 +1,12 @@
 <script lang="ts" module>
 	import StageElement from '$lib/components/StageElement.svelte';
-	import { GameLogic } from '$lib/logic/Game.svelte';
+	import { useGameLogic } from '$lib/logic/Game.svelte';
 	import GameModeSelect from './GameModeSelect.svelte';
 	import GameProfiles from './GameProfiles.svelte';
 </script>
 
 <script lang="ts">
-	const game = GameLogic.fromContext();
+	const game = useGameLogic();
 </script>
 
 <StageElement>

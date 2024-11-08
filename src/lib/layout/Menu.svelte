@@ -2,7 +2,7 @@
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import MenuPage, { type MenuPageProps } from '$lib/components/MenuPage.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
-	import { GameLogic } from '$lib/logic/Game.svelte';
+	import { useGameLogic } from '$lib/logic/Game.svelte';
 
 	export type MenuPageData = {
 		title: string;
@@ -27,7 +27,7 @@
 </script>
 
 <script lang="ts">
-	const game = GameLogic.fromContext();
+	const game = useGameLogic();
 
 	let page: MenuPageData = $state.raw(MENU_PAGE.HOME);
 

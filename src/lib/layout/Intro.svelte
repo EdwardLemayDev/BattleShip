@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { GameLogic } from '$lib/logic/Game.svelte';
+	import { useGameLogic } from '$lib/logic/Game.svelte';
 	import { debounce } from '$lib/utils/debounce';
 	import { sleep } from '$lib/utils/sleep';
 	import { onMount } from 'svelte';
@@ -39,7 +39,7 @@
 </script>
 
 <script lang="ts">
-	const game = GameLogic.fromContext();
+	const game = useGameLogic();
 
 	let stage: IntroStage | null = $state.raw(null);
 	let skipNoticed: boolean = $state(false);

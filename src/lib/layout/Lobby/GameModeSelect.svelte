@@ -1,6 +1,6 @@
 <script lang="ts" module>
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { GameLogic, type GameMode } from '$lib/logic/Game.svelte';
+	import { useGameLogic, type GameMode } from '$lib/logic/Game.svelte';
 	import { tw } from '$lib/utils/tw';
 	import { fly } from 'svelte/transition';
 
@@ -50,7 +50,7 @@
 </script>
 
 <script lang="ts">
-	const game = GameLogic.fromContext();
+	const game = useGameLogic();
 </script>
 
 <div class="flex w-full select-none flex-col gap-3.5 rounded-lg border border-neutral-800 p-3.5">

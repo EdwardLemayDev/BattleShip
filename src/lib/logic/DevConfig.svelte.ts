@@ -1,43 +1,22 @@
-import { getContext, hasContext, setContext } from 'svelte';
+import strictContext from '$lib/utils/context';
+import syncStateToLocal from '$lib/utils/local.svelte';
 
-const CONTEXT_KEY = Symbol();
+const CONTEXT = strictContext<DevSettings>();
 
-const DEV_KEYS = Object.freeze({
-	MENU_OPENED: 'dev_menu_opened',
-	SKIP_INTRO: 'skip_intro',
-	NEW_LOBBY: 'new_lobby'
-} as const);
-
-export class DevConfig {
-	static fromContext(): DevConfig | never {
-		if (hasContext(CONTEXT_KEY)) return getContext<DevConfig>(CONTEXT_KEY);
-		throw new Error('DevConfig was not initialized yet');
-	}
-
+class DevSettings {
 	menuOpened: boolean = $state(false);
 	skipIntro: boolean = $state(false);
 	newLobby: boolean = $state(false);
 
 	constructor() {
-		setContext(CONTEXT_KEY, this);
-
-		if (typeof window !== 'undefined') {
-			this.menuOpened = getFromLocal(DEV_KEYS.MENU_OPENED, 'false');
-			$effect(() => saveToLocal(DEV_KEYS.MENU_OPENED, this.menuOpened));
-
-			this.skipIntro = getFromLocal(DEV_KEYS.SKIP_INTRO, 'false');
-			$effect(() => saveToLocal(DEV_KEYS.SKIP_INTRO, this.skipIntro));
-
-			this.newLobby = getFromLocal(DEV_KEYS.NEW_LOBBY, 'false');
-			$effect(() => saveToLocal(DEV_KEYS.NEW_LOBBY, this.newLobby));
-		}
+		syncStateToLocal(this, 'menuOpened', 'skipIntro', 'newLobby');
 	}
 }
 
-function getFromLocal(key: string, fallback: string) {
-	return JSON.parse(localStorage.getItem(key) ?? fallback);
+export function initDevSettings() {
+	return CONTEXT.set(new DevSettings());
 }
 
-function saveToLocal(key: string, value: any) {
-	localStorage.setItem(key, JSON.stringify(value));
+export function useDevSettings() {
+	return CONTEXT.get();
 }
