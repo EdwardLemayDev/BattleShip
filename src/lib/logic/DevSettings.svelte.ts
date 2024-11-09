@@ -1,7 +1,8 @@
+import { dev } from '$app/environment';
 import strictContext from '$lib/utils/context';
 import syncStateToLocal from '$lib/utils/local.svelte';
 
-const CONTEXT = strictContext<DevSettings>();
+const Context = strictContext<DevSettings>();
 
 class DevSettings {
 	menuOpened: boolean = $state(false);
@@ -14,9 +15,9 @@ class DevSettings {
 }
 
 export function initDevSettings() {
-	return CONTEXT.set(new DevSettings());
+	if (dev) return Context.set(new DevSettings());
 }
 
 export function useDevSettings() {
-	return CONTEXT.get();
+	if (dev) return Context.get();
 }

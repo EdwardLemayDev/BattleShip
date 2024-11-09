@@ -1,7 +1,9 @@
 <script lang="ts" module>
+	import { dev } from '$app/environment';
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { useGameLogic } from '$lib/logic/Game.svelte';
+	import { useDevSettings } from '$lib/logic/DevSettings.svelte';
+	import { useGuiState } from '$lib/logic/GuiState.svelte';
 	import { debounce } from '$lib/utils/debounce';
 	import { sleep } from '$lib/utils/sleep';
 	import { onMount } from 'svelte';
@@ -39,7 +41,10 @@
 </script>
 
 <script lang="ts">
-	const game = useGameLogic();
+	const DevSettings = useDevSettings();
+	const GuiState = useGuiState();
+
+	let skipped = false;
 
 	let stage: IntroStage | null = $state.raw(null);
 	let skipNoticed: boolean = $state(false);
@@ -53,7 +58,13 @@
 		await sleep(delay);
 		stage = INTRO_STAGE.CREATOR;
 		await sleep(delay);
-		game.introCompleted();
+
+		if (skipped) return;
+		if (dev && DevSettings?.newLobby) {
+			GuiState.call('skip');
+		} else {
+			GuiState.call('next');
+		}
 	});
 </script>
 
@@ -66,7 +77,14 @@
 			}, 2500);
 			return;
 		}
-		game.introCompleted();
+
+		skipped = true;
+
+		if (dev && DevSettings?.newLobby) {
+			GuiState.call('skip');
+		} else {
+			GuiState.call('next');
+		}
 	})}
 />
 

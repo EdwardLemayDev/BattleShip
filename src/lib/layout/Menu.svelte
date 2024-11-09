@@ -50,7 +50,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			game.createLobby();
+			game.guiState.call('next');
 		}}
 	>
 		New Game
