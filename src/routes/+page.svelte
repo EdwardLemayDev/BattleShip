@@ -1,19 +1,18 @@
 <script lang="ts" module>
-	import { dev } from '$app/environment';
 	import StageRoot from '$lib/components/StageRoot.svelte';
 	import DevMenu from '$lib/layout/DevMenu.svelte';
 	import Intro from '$lib/layout/Intro.svelte';
 	import Loading from '$lib/layout/Loading.svelte';
 	import Lobby from '$lib/layout/Lobby/Lobby.svelte';
 	import Menu from '$lib/layout/Menu.svelte';
-	import { initDevSettings } from '$lib/logic/DevSettings.svelte';
-	import { initGameLogic } from '$lib/logic/Game.svelte';
+	import { DevSettings } from '$lib/logic/DevSettings.svelte';
+	import { GameLogic } from '$lib/logic/Game.svelte';
 	import { onMount } from 'svelte';
 </script>
 
 <script lang="ts">
-	const devSettings = initDevSettings();
-	const game = initGameLogic();
+	const devSettings = DevSettings && new DevSettings();
+	const game = new GameLogic();
 
 	const CurrentStage = $derived.by(() => {
 		switch (game.guiState.current) {
@@ -29,7 +28,7 @@
 	});
 
 	onMount(() => {
-		if (dev && devSettings?.skipIntro) {
+		if (devSettings && devSettings.skipIntro) {
 			game.guiState.call('skip');
 		} else {
 			game.guiState.call('next');

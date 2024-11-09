@@ -1,51 +1,43 @@
-import strictContext from '$lib/utils/context';
+import { UseContext } from '$lib/utils/class/hook/UseContext';
 import createFsm from '$lib/utils/fsm';
-import { useDevSettings } from './DevSettings.svelte';
-
-const Context = strictContext<GuiStateLogic>();
+import { DevSettings } from './DevSettings.svelte';
 
 export type GuiState = 'loading' | 'intro' | 'menu' | 'lobby';
 
-class GuiStateLogic {
-	#current = $state('loading') as GuiState;
-	#set;
+export const GuiStateLogic = UseContext(
+	class GuiStateLogic {
+		#current = $state('loading') as GuiState;
+		#set;
 
-	constructor() {
-		const DevSettings = useDevSettings();
+		constructor() {
+			const devSettings = DevSettings && DevSettings.fromContext();
 
-		this.#set = createFsm<GuiState, 'next' | 'skip'>({
-			initial: 'loading',
-			states: {
-				loading: {
-					next: () => 'intro',
-					skip: () => {
-						if (DevSettings?.newLobby) return 'lobby';
-						return 'menu';
-					}
+			this.#set = createFsm<GuiState, 'next' | 'skip'>({
+				initial: 'loading',
+				states: {
+					loading: {
+						next: () => 'intro',
+						skip: () => {
+							if (devSettings && devSettings.newLobby) return 'lobby';
+							return 'menu';
+						}
+					},
+					intro: { next: () => 'menu', skip: () => 'lobby' },
+					menu: { next: () => 'lobby' },
+					lobby: { next: () => 'lobby' }
 				},
-				intro: { next: () => 'menu', skip: () => 'lobby' },
-				menu: { next: () => 'lobby' },
-				lobby: { next: () => 'lobby' }
-			},
-			update: (state) => {
-				this.#current = state;
-			}
-		});
+				update: (state) => {
+					this.#current = state;
+				}
+			});
+		}
+
+		get current() {
+			return this.#current;
+		}
+
+		get call() {
+			return this.#set;
+		}
 	}
-
-	get current() {
-		return this.#current;
-	}
-
-	get call() {
-		return this.#set;
-	}
-}
-
-export function initGuiState() {
-	return Context.set(new GuiStateLogic());
-}
-
-export function useGuiState() {
-	return Context.get();
-}
+);

@@ -1,9 +1,8 @@
 <script lang="ts" module>
-	import { dev } from '$app/environment';
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { useDevSettings } from '$lib/logic/DevSettings.svelte';
-	import { useGuiState } from '$lib/logic/GuiState.svelte';
+	import { DevSettings } from '$lib/logic/DevSettings.svelte';
+	import { GuiStateLogic } from '$lib/logic/GuiState.svelte';
 	import { debounce } from '$lib/utils/debounce';
 	import { sleep } from '$lib/utils/sleep';
 	import { onMount } from 'svelte';
@@ -41,8 +40,8 @@
 </script>
 
 <script lang="ts">
-	const DevSettings = useDevSettings();
-	const GuiState = useGuiState();
+	const devSettings = DevSettings && DevSettings.fromContext();
+	const guiState = GuiStateLogic.fromContext();
 
 	let skipped = false;
 
@@ -60,10 +59,10 @@
 		await sleep(delay);
 
 		if (skipped) return;
-		if (dev && DevSettings?.newLobby) {
-			GuiState.call('skip');
+		if (devSettings && devSettings.newLobby) {
+			guiState.call('skip');
 		} else {
-			GuiState.call('next');
+			guiState.call('next');
 		}
 	});
 </script>
@@ -80,10 +79,10 @@
 
 		skipped = true;
 
-		if (dev && DevSettings?.newLobby) {
-			GuiState.call('skip');
+		if (devSettings && devSettings.newLobby) {
+			guiState.call('skip');
 		} else {
-			GuiState.call('next');
+			guiState.call('next');
 		}
 	})}
 />

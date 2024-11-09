@@ -1,23 +1,15 @@
-import strictContext from '$lib/utils/context';
-import { initGuiState } from './GuiState.svelte';
-
-const Context = strictContext<GameLogic>();
+import { UseContext } from '$lib/utils/class/hook/UseContext';
+import { GuiStateLogic } from './GuiState.svelte';
 
 export type GameMode = 'Classic' | 'Salvo' | 'Bonus' | 'Special';
 
-class GameLogic {
-	#guiState = initGuiState();
-	get guiState() {
-		return this.#guiState;
+export const GameLogic = UseContext(
+	class GameLogic {
+		#guiState = new GuiStateLogic();
+		get guiState() {
+			return this.#guiState;
+		}
+
+		gameMode: GameMode = $state('Classic');
 	}
-
-	gameMode: GameMode = $state('Classic');
-}
-
-export function initGameLogic() {
-	return Context.set(new GameLogic());
-}
-
-export function useGameLogic() {
-	return Context.get();
-}
+);
