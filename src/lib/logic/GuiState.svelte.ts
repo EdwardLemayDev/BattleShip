@@ -1,10 +1,10 @@
-import { UseContext } from '$lib/utils/class/hook/UseContext';
+import { useContext } from '$lib/class/useContext';
 import createFsm from '$lib/utils/fsm';
 import { DevSettings } from './DevSettings.svelte';
 
 export type GuiState = 'loading' | 'intro' | 'menu' | 'lobby';
 
-export const GuiStateLogic = UseContext(
+export const GuiStateLogic = useContext(
 	class GuiStateLogic {
 		#current = $state('loading') as GuiState;
 		#set;

@@ -1,9 +1,9 @@
-import { UseContext } from '$lib/utils/class/hook/UseContext';
+import { useContext } from '$lib/class/useContext';
 import { GuiStateLogic } from './GuiState.svelte';
 
 export type GameMode = 'Classic' | 'Salvo' | 'Bonus' | 'Special';
 
-export const GameLogic = UseContext(
+export const GameLogic = useContext(
 	class GameLogic {
 		#guiState = new GuiStateLogic();
 		get guiState() {

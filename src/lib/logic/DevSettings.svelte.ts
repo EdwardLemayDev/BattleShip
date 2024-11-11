@@ -1,10 +1,10 @@
 import { dev } from '$app/environment';
-import { UseContext } from '$lib/utils/class/hook/UseContext';
+import { useContext } from '$lib/class/useContext';
 import syncStateToLocal from '$lib/utils/local.svelte';
 
 export const DevSettings =
 	dev &&
-	UseContext(
+	useContext(
 		class DevSettings {
 			menuOpened: boolean = $state(false);
 			skipIntro: boolean = $state(false);
