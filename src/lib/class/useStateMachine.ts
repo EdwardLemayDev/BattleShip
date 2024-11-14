@@ -6,7 +6,7 @@ export type StateMachineEvents<
 	Events extends string = string
 > = {
 	[Event in Events]: {
-		[State in States]?: ((this: Instance) => States) | States;
+		[State in States]?: (this: Instance) => States;
 	};
 };
 
@@ -27,7 +27,7 @@ export type StateMachineStateError<
 > = {
 	state: {
 		from: States;
-		to: States;
+		to: any;
 		during: Events;
 	};
 	event: null;
@@ -90,14 +90,9 @@ export function useStateMachine<
 					return;
 				}
 
-				const currentEvent = events[event][internal[STATE]];
-				const isFunctionCall = typeof currentEvent === 'function';
+				const newState = events[event][internal[STATE]]?.call(this as Instance);
 
-				const newState = (
-					isFunctionCall ? currentEvent.call(this as Instance) : currentEvent
-				) as States;
-
-				if (!states.includes(newState)) {
+				if (newState === undefined || !states.includes(newState)) {
 					error.call(this as Instance, {
 						state: {
 							from: internal[STATE],

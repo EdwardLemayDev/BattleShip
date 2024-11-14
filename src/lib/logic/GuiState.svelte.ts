@@ -10,21 +10,31 @@ class GuiStateCore {
 }
 
 export const GuiStateLogic = useStrictContext(
-	useStateMachine<typeof GuiStateCore, GuiState, 'next' | 'skip'>(GuiStateCore, {
-		states: ['loading', 'intro', 'menu', 'lobby'],
+	useStateMachine(GuiStateCore, {
+		states: ['loading', 'intro', 'menu', 'lobby'] satisfies GuiState[],
 		events: {
 			next: {
-				loading: 'intro',
-				intro: 'menu',
-				menu: 'lobby',
-				lobby: 'lobby'
+				loading() {
+					return 'intro';
+				},
+				intro() {
+					return 'menu';
+				},
+				menu() {
+					return 'lobby';
+				},
+				lobby() {
+					return 'lobby';
+				}
 			},
 			skip: {
 				loading() {
 					if (this.dev && this.dev.newLobby) return 'lobby';
 					return 'menu';
 				},
-				intro: 'lobby'
+				intro() {
+					return 'lobby';
+				}
 			}
 		},
 		update(state) {
