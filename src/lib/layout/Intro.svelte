@@ -1,8 +1,8 @@
 <script lang="ts" module>
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { DevSettings } from '$lib/logic/DevSettings.svelte';
-	import { GuiStateLogic } from '$lib/logic/GuiState.svelte';
+	import { Dev } from '$lib/dev';
+	import { GUI } from '$lib/logic/GUI.svelte';
 	import { debounce } from '$lib/utils/debounce';
 	import { sleep } from '$lib/utils/sleep';
 	import { onMount } from 'svelte';
@@ -40,30 +40,38 @@
 </script>
 
 <script lang="ts">
-	const devSettings = DevSettings && DevSettings.fromContext();
-	const guiState = GuiStateLogic.fromContext();
+	const dev = Dev && Dev.fromContext();
+	const gui = GUI.fromContext();
 
 	let skipped = false;
 
 	let stage: IntroStage | null = $state.raw(null);
 	let skipNoticed: boolean = $state(false);
 
+	function end() {
+		if (dev && dev.newLobby) {
+			gui.dispatch('skip');
+		} else {
+			gui.dispatch('next');
+		}
+	}
+
 	onMount(async () => {
 		const delay = 1500 + INTRO_ANIMATION_DURATION;
 
 		stage = INTRO_STAGE.SVELTE;
 		await sleep(delay);
+		if (skipped) return;
+
 		stage = INTRO_STAGE.TAILWINDCSS;
 		await sleep(delay);
+		if (skipped) return;
+
 		stage = INTRO_STAGE.CREATOR;
 		await sleep(delay);
-
 		if (skipped) return;
-		if (devSettings && devSettings.newLobby) {
-			guiState.dispatch('skip');
-		} else {
-			guiState.dispatch('next');
-		}
+
+		end();
 	});
 </script>
 
@@ -79,11 +87,7 @@
 
 		skipped = true;
 
-		if (devSettings && devSettings.newLobby) {
-			guiState.dispatch('skip');
-		} else {
-			guiState.dispatch('next');
-		}
+		end();
 	})}
 />
 
