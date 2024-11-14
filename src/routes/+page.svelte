@@ -29,9 +29,9 @@
 
 	onMount(() => {
 		if (devSettings && devSettings.skipIntro) {
-			game.guiState.call('skip');
+			game.guiState.dispatch('skip');
 		} else {
-			game.guiState.call('next');
+			game.guiState.dispatch('next');
 		}
 	});
 </script>

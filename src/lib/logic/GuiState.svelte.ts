@@ -1,43 +1,34 @@
 import { useStrictContext } from '$lib/class/useContext';
-import createFsm from '$lib/utils/fsm';
+import { useStateMachine } from '$lib/class/useStateMachine';
 import { DevSettings } from './DevSettings.svelte';
 
 export type GuiState = 'loading' | 'intro' | 'menu' | 'lobby';
 
+class GuiStateCore {
+	current = $state('loading') as GuiState;
+	dev = DevSettings && DevSettings.fromContext();
+}
+
 export const GuiStateLogic = useStrictContext(
-	class GuiStateLogic {
-		#current = $state('loading') as GuiState;
-		#set;
-
-		constructor() {
-			const devSettings = DevSettings && DevSettings.fromContext();
-
-			this.#set = createFsm<GuiState, 'next' | 'skip'>({
-				initial: 'loading',
-				states: {
-					loading: {
-						next: () => 'intro',
-						skip: () => {
-							if (devSettings && devSettings.newLobby) return 'lobby';
-							return 'menu';
-						}
-					},
-					intro: { next: () => 'menu', skip: () => 'lobby' },
-					menu: { next: () => 'lobby' },
-					lobby: { next: () => 'lobby' }
+	useStateMachine<typeof GuiStateCore, GuiState, 'next' | 'skip'>(GuiStateCore, {
+		states: ['loading', 'intro', 'menu', 'lobby'],
+		events: {
+			next: {
+				loading: 'intro',
+				intro: 'menu',
+				menu: 'lobby',
+				lobby: 'lobby'
+			},
+			skip: {
+				loading() {
+					if (this.dev && this.dev.newLobby) return 'lobby';
+					return 'menu';
 				},
-				update: (state) => {
-					this.#current = state;
-				}
-			});
+				intro: 'lobby'
+			}
+		},
+		update(state) {
+			this.current = state;
 		}
-
-		get current() {
-			return this.#current;
-		}
-
-		get call() {
-			return this.#set;
-		}
-	}
+	})
 );

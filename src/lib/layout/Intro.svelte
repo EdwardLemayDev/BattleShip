@@ -60,9 +60,9 @@
 
 		if (skipped) return;
 		if (devSettings && devSettings.newLobby) {
-			guiState.call('skip');
+			guiState.dispatch('skip');
 		} else {
-			guiState.call('next');
+			guiState.dispatch('next');
 		}
 	});
 </script>
@@ -80,9 +80,9 @@
 		skipped = true;
 
 		if (devSettings && devSettings.newLobby) {
-			guiState.call('skip');
+			guiState.dispatch('skip');
 		} else {
-			guiState.call('next');
+			guiState.dispatch('next');
 		}
 	})}
 />
