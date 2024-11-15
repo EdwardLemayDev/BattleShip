@@ -48,7 +48,6 @@
 </script>
 
 {#snippet HomePage()}
-	<!-- New Game will change from Menu to Lobby instead of being a page -->
 	<MenuButton
 		size="lg"
 		onclick={() => {

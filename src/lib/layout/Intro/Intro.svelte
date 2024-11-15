@@ -1,128 +1,81 @@
 <script lang="ts" module>
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { Dev } from '$lib/dev';
 	import { GUI } from '$lib/logic/GUI.svelte';
 	import { debounce } from '$lib/utils/debounce';
 	import { sleep } from '$lib/utils/sleep';
 	import { onMount } from 'svelte';
 	import { blur, fly } from 'svelte/transition';
-
-	export type IntroStage = {
-		color: string;
-		tag: string;
-		src: string;
-		alt: string;
-	};
-
-	export const INTRO_STAGE = Object.freeze({
-		SVELTE: {
-			color: '#ff3e00',
-			tag: 'with',
-			src: '/svelte-horizontal.svg',
-			alt: 'Svelte official horizontal logo'
-		},
-		TAILWINDCSS: {
-			color: '#38bdf8',
-			tag: 'with',
-			src: '/tailwindcss-logotype-white.svg',
-			alt: 'Tailwindcss official white logo'
-		},
-		CREATOR: {
-			color: '#BA2D2D',
-			tag: 'by',
-			src: '/edle-v1.svg',
-			alt: 'Personal logo from creator Edward'
-		}
-	} as const);
+	import { IntroStage } from './IntroStage.svelte';
 
 	const INTRO_ANIMATION_DURATION = GLOBAL_ANIMATION_DURATION * 2;
+	const INTRO_ANIMATION_DELAY = 1500 + INTRO_ANIMATION_DURATION;
+
+	const INTRO_HIDE_SKIP_DELAY = 2000;
 </script>
 
 <script lang="ts">
-	const dev = Dev && Dev.fromContext();
 	const gui = GUI.fromContext();
-
-	let skipped = false;
-
-	let stage: IntroStage | null = $state.raw(null);
-	let skipNoticed: boolean = $state(false);
-
-	function end() {
-		if (dev && dev.newLobby) {
-			gui.dispatch('skip');
-		} else {
-			gui.dispatch('next');
-		}
-	}
+	const intro = new IntroStage(() => {
+		intro.done = true;
+		gui.dispatch('completed');
+	});
 
 	onMount(async () => {
-		const delay = 1500 + INTRO_ANIMATION_DURATION;
-
-		stage = INTRO_STAGE.SVELTE;
-		await sleep(delay);
-		if (skipped) return;
-
-		stage = INTRO_STAGE.TAILWINDCSS;
-		await sleep(delay);
-		if (skipped) return;
-
-		stage = INTRO_STAGE.CREATOR;
-		await sleep(delay);
-		if (skipped) return;
-
-		end();
+		while (true) {
+			intro.dispatch('next');
+			if (intro.done) return;
+			await sleep(INTRO_ANIMATION_DELAY);
+		}
 	});
 </script>
 
 <svelte:window
 	onclick={debounce(250, () => {
-		if (!skipNoticed) {
-			skipNoticed = true;
+		if (!intro.showSkip) {
+			intro.showSkip = true;
 			setTimeout(() => {
-				skipNoticed = false;
-			}, 2500);
+				intro.showSkip = false;
+			}, INTRO_HIDE_SKIP_DELAY);
 			return;
 		}
 
-		skipped = true;
-
-		end();
+		intro.completed();
 	})}
 />
 
 <StageElement>
-	{#if stage !== null}
+	{#if intro.stage !== 'start'}
 		<div class="flex h-44 w-full max-w-3xl select-none gap-2">
 			<div class="w-28">
 				<h1 class="overflow-hidden whitespace-pre text-xl font-bold text-neutral-500">
 					<span>Made</span>
 					<span class="inline-grid grid-cols-1 grid-rows-1">
-						{#key stage}
+						{#key intro.stage}
 							<span
-								style="--color:{stage.color}"
+								style="--color:{intro.color}"
 								class="col-start-1 row-start-1 text-[--color] underline underline-offset-2"
 								in:fly={{ duration: INTRO_ANIMATION_DURATION, y: -50 }}
 								out:fly={{ duration: INTRO_ANIMATION_DURATION, y: 50 }}
 							>
-								{stage.tag}
+								{intro.tag}
 							</span>
 						{/key}
 					</span>
 				</h1>
 			</div>
 			<div class="grid flex-grow grid-cols-1 grid-rows-1">
-				{#key stage}
+				{#key intro.stage}
 					<div
 						class="col-start-1 row-start-1 grid w-full place-items-center"
 						transition:blur={{ duration: INTRO_ANIMATION_DURATION }}
 					>
-						<img class="w-full" src={stage.src} alt={stage.alt} draggable="false" />
+						<img class="w-full" src={intro.src} alt={intro.alt} draggable="false" />
 					</div>
 				{/key}
 			</div>
 		</div>
-		{#if skipNoticed}
+		{#if intro.showSkip}
 			<p
 				class="absolute bottom-0 left-0 select-none p-6 text-xl font-bold text-neutral-300"
 				transition:fly={{ duration: INTRO_ANIMATION_DURATION, y: 50 }}

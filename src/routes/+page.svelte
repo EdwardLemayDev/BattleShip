@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	import StageRoot from '$lib/components/StageRoot.svelte';
 	import { Dev, DevMenu } from '$lib/dev';
-	import Intro from '$lib/layout/Intro.svelte';
+	import Intro from '$lib/layout/Intro/Intro.svelte';
 	import Loading from '$lib/layout/Loading.svelte';
 	import Lobby from '$lib/layout/Lobby/Lobby.svelte';
 	import Menu from '$lib/layout/Menu.svelte';
@@ -16,7 +16,7 @@
 	const game = new Game();
 
 	const CurrentStage = $derived.by(() => {
-		switch (gui.current) {
+		switch (gui.stage) {
 			case 'loading':
 				return Loading;
 			case 'intro':
@@ -29,11 +29,7 @@
 	});
 
 	onMount(() => {
-		if (dev && dev.skipIntro) {
-			gui.dispatch('skip');
-		} else {
-			gui.dispatch('next');
-		}
+		gui.dispatch('loaded');
 	});
 </script>
 

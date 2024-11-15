@@ -9,7 +9,7 @@ let dev: undefined | InstanceType<Exclude<typeof Dev, false>>;
 export const GUI = useStrictContext(
 	useStateMachine(
 		class GUILogic {
-			current = $state('loading') as GuiState;
+			stage = $state('loading') as GuiState;
 
 			constructor() {
 				if (Dev) dev = Dev.fromContext();
@@ -18,34 +18,31 @@ export const GUI = useStrictContext(
 		{
 			states: ['loading', 'intro', 'menu', 'lobby'] satisfies GuiState[],
 			events: {
-				next: {
+				loaded: {
 					loading() {
+						if (Dev && dev?.skipIntro) {
+							return dev.newLobby ? 'lobby' : 'menu';
+						}
 						return 'intro';
-					},
-					intro() {
-						return 'menu';
-					},
-					menu() {
-						return 'lobby';
-					},
-					lobby() {
-						return 'lobby';
 					}
 				},
-				skip: {
-					loading() {
+				completed: {
+					intro() {
 						if (Dev && dev?.newLobby) {
 							return 'lobby';
 						}
 						return 'menu';
-					},
-					intro() {
+					}
+				},
+				// TODO - Finalise removal of old events
+				next: {
+					menu() {
 						return 'lobby';
 					}
 				}
 			},
 			update(state) {
-				this.current = state;
+				this.stage = state;
 			}
 		}
 	)
