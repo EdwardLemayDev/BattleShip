@@ -4,7 +4,7 @@
 	import Intro from '$lib/layout/Intro/Intro.svelte';
 	import Loading from '$lib/layout/Loading.svelte';
 	import Lobby from '$lib/layout/Lobby/Lobby.svelte';
-	import Menu from '$lib/layout/Menu.svelte';
+	import MainMenu from '$lib/layout/MainMenu/MainMenu.svelte';
 	import { Game } from '$lib/logic/Game.svelte';
 	import { GUI } from '$lib/logic/GUI.svelte';
 	import { onMount } from 'svelte';
@@ -22,7 +22,7 @@
 			case 'intro':
 				return Intro;
 			case 'menu':
-				return Menu;
+				return MainMenu;
 			case 'lobby':
 				return Lobby;
 		}

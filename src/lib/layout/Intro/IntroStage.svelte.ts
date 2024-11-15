@@ -20,7 +20,7 @@ export const IntroStage = useStateMachine(
 		}
 	},
 	{
-		states: ['start', 'svelte', 'tailwindcss', 'creator'],
+		states: ['start', 'svelte', 'tailwindcss', 'creator'] satisfies IntroStages[],
 		events: {
 			next: {
 				start() {

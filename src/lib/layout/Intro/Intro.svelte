@@ -23,8 +23,8 @@
 
 	onMount(async () => {
 		while (true) {
-			intro.dispatch('next');
 			if (intro.done) return;
+			intro.dispatch('next');
 			await sleep(INTRO_ANIMATION_DELAY);
 		}
 	});

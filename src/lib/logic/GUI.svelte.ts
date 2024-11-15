@@ -34,8 +34,7 @@ export const GUI = useStrictContext(
 						return 'menu';
 					}
 				},
-				// TODO - Finalise removal of old events
-				next: {
+				new_game: {
 					menu() {
 						return 'lobby';
 					}

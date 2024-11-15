@@ -1,47 +1,24 @@
 <script lang="ts" module>
 	import MenuButton from '$lib/components/MenuButton.svelte';
-	import MenuPage, { type MenuPageProps } from '$lib/components/MenuPage.svelte';
+	import MenuPage from '$lib/components/MenuPage.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
-	import { Game } from '$lib/logic/Game.svelte';
 	import { GUI } from '$lib/logic/GUI.svelte';
-
-	export type MenuPageData = {
-		title: string;
-		size?: MenuPageProps['titleSize'];
-	};
-
-	export const MENU_PAGE = Object.freeze({
-		HOME: {
-			title: 'Battleship',
-			size: 'lg'
-		},
-		JOIN: {
-			title: 'Join Game'
-		},
-		SETTINGS: {
-			title: 'Settings'
-		},
-		ABOUT: {
-			title: 'About'
-		}
-	} as const);
+	import { MainMenuStage } from './MainMenuStage.svelte';
 </script>
 
 <script lang="ts">
 	const gui = GUI.fromContext();
-	const game = Game.fromContext();
-
-	let page: MenuPageData = $state.raw(MENU_PAGE.HOME);
+	const menu = new MainMenuStage();
 
 	const CurrentPage = $derived.by(() => {
-		switch (page) {
-			case MENU_PAGE.HOME:
+		switch (menu.stage) {
+			case 'home':
 				return HomePage;
-			case MENU_PAGE.JOIN:
+			case 'join':
 				return JoinPage;
-			case MENU_PAGE.SETTINGS:
+			case 'settings':
 				return SettingsPage;
-			case MENU_PAGE.ABOUT:
+			case 'about':
 				return AboutPage;
 		}
 	});
@@ -51,7 +28,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			gui.dispatch('next');
+			gui.dispatch('new_game');
 		}}
 	>
 		New Game
@@ -59,7 +36,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			page = MENU_PAGE.JOIN;
+			menu.dispatch('join');
 		}}
 	>
 		Join Game
@@ -68,7 +45,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			page = MENU_PAGE.SETTINGS;
+			menu.dispatch('settings');
 		}}
 	>
 		Settings
@@ -76,7 +53,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			page = MENU_PAGE.ABOUT;
+			menu.dispatch('about');
 		}}
 	>
 		About
@@ -94,7 +71,7 @@
 		<MenuButton
 			accent="danger"
 			onclick={() => {
-				page = MENU_PAGE.HOME;
+				menu.dispatch('back');
 			}}
 		>
 			Cancel
@@ -120,7 +97,7 @@
 		<MenuButton
 			accent="danger"
 			onclick={() => {
-				page = MENU_PAGE.HOME;
+				menu.dispatch('back');
 			}}
 		>
 			Cancel
@@ -143,15 +120,15 @@
 	</div>
 	<MenuButton
 		onclick={() => {
-			page = MENU_PAGE.HOME;
+			menu.dispatch('back');
 		}}
 	>
 		Back
 	</MenuButton>
 {/snippet}
 
-{#key page}
+{#key menu.stage}
 	<StageElement>
-		<MenuPage title={page.title} titleSize={page.size} children={CurrentPage} />
+		<MenuPage title={menu.title} titleSize={menu.size} children={CurrentPage} />
 	</StageElement>
 {/key}
