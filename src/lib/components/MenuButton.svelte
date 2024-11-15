@@ -34,9 +34,9 @@
 
 		accent: {
 			neutral: tw('text-neutral-400 hover:text-neutral-100'),
-			warning: tw('text-yellow-600 hover:text-yellow-200'),
-			danger: tw('text-red-600 hover:text-red-200'),
-			success: tw('text-green-600 hover:text-green-200')
+			warning: tw('text-yellow-500 hover:text-yellow-200'),
+			danger: tw('text-red-500 hover:text-red-200'),
+			success: tw('text-green-500 hover:text-green-200')
 		}
 	};
 

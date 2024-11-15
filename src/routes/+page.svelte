@@ -12,8 +12,8 @@
 
 <script lang="ts">
 	const dev = Dev && new Dev();
-	const gui = new GUI();
 	const game = new Game();
+	const gui = new GUI();
 
 	const CurrentStage = $derived.by(() => {
 		switch (gui.stage) {

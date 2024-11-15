@@ -1,6 +1,7 @@
 import { useStrictContext } from '$lib/class/useContext';
 import { useStateMachine } from '$lib/class/useStateMachine';
 import { Dev } from '$lib/dev';
+import { Game } from './Game.svelte';
 
 export type GuiState = 'loading' | 'intro' | 'menu' | 'lobby';
 
@@ -10,6 +11,7 @@ export const GUI = useStrictContext(
 	useStateMachine(
 		class GUILogic {
 			stage = $state('loading') as GuiState;
+			game = Game.fromContext();
 
 			constructor() {
 				if (Dev) dev = Dev.fromContext();
@@ -29,6 +31,7 @@ export const GUI = useStrictContext(
 				completed: {
 					intro() {
 						if (Dev && dev?.newLobby) {
+							this.game.resetLobby();
 							return 'lobby';
 						}
 						return 'menu';
@@ -36,7 +39,13 @@ export const GUI = useStrictContext(
 				},
 				new_game: {
 					menu() {
+						this.game.resetLobby();
 						return 'lobby';
+					}
+				},
+				quit: {
+					lobby() {
+						return 'menu';
 					}
 				}
 			},

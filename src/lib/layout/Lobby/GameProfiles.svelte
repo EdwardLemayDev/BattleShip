@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import { Game } from '$lib/logic/Game.svelte';
 	import { tw } from '$lib/utils/tw';
 
 	const ProfileStyles = {
@@ -22,11 +23,15 @@
 			),
 
 			ally: tw(
-				'border-green-950 text-green-100 placeholder:text-green-800/50 focus:border-green-800'
+				'border-green-950 text-green-200 placeholder:text-green-800/50 focus:border-green-800'
 			),
-			ennemy: tw('border-red-950 text-red-100')
+			ennemy: tw('border-red-950 text-red-200')
 		}
 	};
+</script>
+
+<script lang="ts">
+	const game = Game.fromContext();
 </script>
 
 <div class="grid w-full select-none grid-cols-2 gap-4">
@@ -44,7 +49,7 @@
 	<div class={tw(ProfileStyles.tile.base, ProfileStyles.tile.ennemy)}>
 		<p class={tw(ProfileStyles.title.base, ProfileStyles.title.ennemy)}>Ennemy Forces</p>
 		<p class={tw(ProfileStyles.fleetName.base, ProfileStyles.fleetName.ennemy)}>
-			Ennemy Fleet Name
+			{game.ennemyName}
 		</p>
 	</div>
 </div>
