@@ -43,7 +43,8 @@
 			name="Ally name"
 			id="ally_name"
 			placeholder="- Fleet Name -"
-			maxlength="25"
+			maxlength="16"
+			bind:value={game.allyName}
 		/>
 	</div>
 	<div class={tw(ProfileStyles.tile.base, ProfileStyles.tile.ennemy)}>

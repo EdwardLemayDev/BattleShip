@@ -16,6 +16,7 @@ export const Game = useStrictContext(
 		gameMode: GameMode = $state('Classic');
 		ennemyMode: EnnemyMode = $state('PVE1');
 
+		allyName: string = $state('');
 		ennemyName: string = $derived(ennemyNames[this.ennemyMode]);
 
 		resetLobby() {

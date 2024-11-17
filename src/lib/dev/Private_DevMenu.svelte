@@ -27,23 +27,28 @@
 			{/if}
 		</button>
 		{#if dev.menuOpened}
-			<MenuToggle bind:value={dev.skipIntro}>
-				{#snippet children(value)}
-					<span>Skip Intro:</span>
-					<span class="underline">
-						{value ? 'On' : 'Off'}
-					</span>
-				{/snippet}
-			</MenuToggle>
-			<MenuToggle bind:value={dev.newLobby}>
-				{#snippet children(value)}
-					<span>Auto Lobby:</span>
-					<span class="underline">
-						{value ? 'On' : 'Off'}
-					</span>
-				{/snippet}
-			</MenuToggle>
-			<p>Game Mode: {game.gameMode}</p>
+			<div class="flex flex-col items-start gap-1 p-2">
+				<MenuToggle bind:value={dev.skipIntro}>
+					{#snippet children(value)}
+						<span>Skip Intro:</span>
+						<span class="underline">
+							{value ? 'On' : 'Off'}
+						</span>
+					{/snippet}
+				</MenuToggle>
+				<MenuToggle bind:value={dev.newLobby}>
+					{#snippet children(value)}
+						<span>Auto Lobby:</span>
+						<span class="underline">
+							{value ? 'On' : 'Off'}
+						</span>
+					{/snippet}
+				</MenuToggle>
+				<hr class="w-full border-neutral-700" />
+				<p>Game Mode: {game.gameMode}</p>
+				<p>Ally Name: {game.allyName}</p>
+				<p>Ennemy Name: {game.ennemyName}</p>
+			</div>
 		{/if}
 	</div>
 {/if}
