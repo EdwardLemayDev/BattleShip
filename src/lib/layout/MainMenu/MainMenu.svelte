@@ -28,7 +28,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			gui.dispatch('new_game');
+			gui.dispatch('lobby');
 		}}
 	>
 		New Game

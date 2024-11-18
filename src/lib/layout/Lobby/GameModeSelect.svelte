@@ -64,14 +64,14 @@
 					name="{name} mode"
 					id="{name}_mode_selector"
 					value={name}
-					bind:group={game.gameMode}
+					bind:group={game.mode}
 				/>
 				<span class={tw(TextStyles.base, TextStyles[name])}>{name}</span>
 			</label>
 		{/each}
 	</div>
-	<div class={tw(DescriptionStyles.base, DescriptionStyles[game.gameMode])}>
-		{#key game.gameMode}
+	<div class={tw(DescriptionStyles.base, DescriptionStyles[game.mode])}>
+		{#key game.mode}
 			<p
 				class="col-start-1 row-start-1 overflow-y-auto"
 				in:fly={{
@@ -81,7 +81,7 @@
 				}}
 				out:fly={{ duration: GLOBAL_ANIMATION_DURATION, x: 75 }}
 			>
-				{ModeDescs[game.gameMode]}
+				{ModeDescs[game.mode]}
 			</p>
 		{/key}
 	</div>

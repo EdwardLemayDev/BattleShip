@@ -45,9 +45,9 @@
 					{/snippet}
 				</MenuToggle>
 				<hr class="w-full border-neutral-700" />
-				<p>Game Mode: {game.gameMode}</p>
-				<p>Ally Name: {game.allyName}</p>
-				<p>Ennemy Name: {game.ennemyName}</p>
+				<p>Game Mode: {game.mode}</p>
+				<p>Ally Name: {game.ally.name}</p>
+				<p>Ennemy Name: {game.ennemy.name}</p>
 			</div>
 		{/if}
 	</div>

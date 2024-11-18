@@ -1,6 +1,7 @@
 <script lang="ts" module>
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
+	import { Game } from '$lib/logic/Game.svelte';
 	import { GUI } from '$lib/logic/GUI.svelte';
 	import GameModeSelect from './GameModeSelect.svelte';
 	import GameProfiles from './GameProfiles.svelte';
@@ -9,6 +10,7 @@
 </script>
 
 <script lang="ts">
+	const game = Game.fromContext();
 	const gui = GUI.fromContext();
 	const popUp = new PopUpStage();
 </script>
@@ -28,6 +30,7 @@
 					size="sm"
 					accent="danger"
 					onclick={() => {
+						game.resetLobby();
 						gui.dispatch('quit');
 					}}>Quit</MenuButton
 				>

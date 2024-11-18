@@ -44,13 +44,14 @@
 			id="ally_name"
 			placeholder="- Fleet Name -"
 			maxlength="16"
-			bind:value={game.allyName}
+			autocomplete="off"
+			bind:value={game.ally.name}
 		/>
 	</div>
 	<div class={tw(ProfileStyles.tile.base, ProfileStyles.tile.ennemy)}>
 		<p class={tw(ProfileStyles.title.base, ProfileStyles.title.ennemy)}>Ennemy Forces</p>
 		<p class={tw(ProfileStyles.fleetName.base, ProfileStyles.fleetName.ennemy)}>
-			{game.ennemyName}
+			{game.ennemy.name}
 		</p>
 	</div>
 </div>

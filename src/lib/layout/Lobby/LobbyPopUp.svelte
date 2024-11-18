@@ -30,7 +30,7 @@
 			size="sm"
 			accent="success"
 			onclick={() => {
-				game.ennemyMode = 'PVE1';
+				game.ennemy.setMode('easy');
 				popUp.dispatch('close');
 			}}>Easy</MenuButton
 		>
@@ -38,7 +38,7 @@
 			size="sm"
 			accent="warning"
 			onclick={() => {
-				game.ennemyMode = 'PVE2';
+				game.ennemy.setMode('medium');
 				popUp.dispatch('close');
 			}}>Medium</MenuButton
 		>
@@ -46,7 +46,7 @@
 			size="sm"
 			accent="danger"
 			onclick={() => {
-				game.ennemyMode = 'PVE3';
+				game.ennemy.setMode('hard');
 				popUp.dispatch('close');
 			}}>Hard</MenuButton
 		>
