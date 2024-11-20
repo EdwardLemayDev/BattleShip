@@ -1,17 +1,17 @@
 <script lang="ts" module>
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { Game } from '$lib/logic/Game.svelte';
+	import { useCore } from '$lib/core/Core.svelte';
 	import { fade, scale } from 'svelte/transition';
-	import { PopUpStage } from './PopUpStage.svelte';
+	import { usePopUp } from './PopUpState.svelte';
 </script>
 
 <script lang="ts">
-	const game = Game.fromContext();
-	const popUp = PopUpStage.fromContext();
+	const core = useCore();
+	const popUp = usePopUp();
 
 	const CurrentPopUp = $derived.by(() => {
-		switch (popUp.stage) {
+		switch (popUp.current) {
 			case 'closed':
 				return undefined;
 			case 'PvE':
@@ -30,31 +30,31 @@
 			size="sm"
 			accent="success"
 			onclick={() => {
-				game.ennemy.setMode('easy');
-				popUp.dispatch('close');
+				core.game.ennemy.setMode('easy');
+				popUp.send('close');
 			}}>Easy</MenuButton
 		>
 		<MenuButton
 			size="sm"
 			accent="warning"
 			onclick={() => {
-				game.ennemy.setMode('medium');
-				popUp.dispatch('close');
+				core.game.ennemy.setMode('medium');
+				popUp.send('close');
 			}}>Medium</MenuButton
 		>
 		<MenuButton
 			size="sm"
 			accent="danger"
 			onclick={() => {
-				game.ennemy.setMode('hard');
-				popUp.dispatch('close');
+				core.game.ennemy.setMode('hard');
+				popUp.send('close');
 			}}>Hard</MenuButton
 		>
 	</div>
 	<div class="grid w-full grid-cols-1">
 		<MenuButton
 			onclick={() => {
-				popUp.dispatch('close');
+				popUp.send('close');
 			}}>Back</MenuButton
 		>
 	</div>
@@ -66,13 +66,13 @@
 	<div class="grid w-full grid-cols-1">
 		<MenuButton
 			onclick={() => {
-				popUp.dispatch('close');
+				popUp.send('close');
 			}}>Back</MenuButton
 		>
 	</div>
 {/snippet}
 
-{#if popUp.stage !== 'closed'}
+{#if popUp.current !== 'closed'}
 	<div
 		class="z-10 col-start-1 row-start-1 grid place-items-center bg-neutral-950/50 p-4 backdrop-blur"
 		transition:fade={{ duration: GLOBAL_ANIMATION_DURATION }}

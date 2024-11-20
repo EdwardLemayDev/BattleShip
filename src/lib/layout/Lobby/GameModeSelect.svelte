@@ -1,6 +1,7 @@
 <script lang="ts" module>
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { Game, type GameMode } from '$lib/logic/Game.svelte';
+	import { useCore } from '$lib/core/Core.svelte';
+	import type { GameMode } from '$lib/core/Game.svelte';
 	import { tw } from '$lib/utils/tw';
 	import { fly } from 'svelte/transition';
 
@@ -50,7 +51,7 @@
 </script>
 
 <script lang="ts">
-	const game = Game.fromContext();
+	const core = useCore();
 </script>
 
 <div class="flex w-full select-none flex-col gap-3.5 rounded-lg border border-neutral-800 p-3.5">
@@ -64,14 +65,14 @@
 					name="{name} mode"
 					id="{name}_mode_selector"
 					value={name}
-					bind:group={game.mode}
+					bind:group={core.game.mode}
 				/>
 				<span class={tw(TextStyles.base, TextStyles[name])}>{name}</span>
 			</label>
 		{/each}
 	</div>
-	<div class={tw(DescriptionStyles.base, DescriptionStyles[game.mode])}>
-		{#key game.mode}
+	<div class={tw(DescriptionStyles.base, DescriptionStyles[core.game.mode])}>
+		{#key core.game.mode}
 			<p
 				class="col-start-1 row-start-1 overflow-y-auto"
 				in:fly={{
@@ -81,7 +82,7 @@
 				}}
 				out:fly={{ duration: GLOBAL_ANIMATION_DURATION, x: 75 }}
 			>
-				{ModeDescs[game.mode]}
+				{ModeDescs[core.game.mode]}
 			</p>
 		{/key}
 	</div>

@@ -2,16 +2,16 @@
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import MenuPage from '$lib/components/MenuPage.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
-	import { GUI } from '$lib/logic/GUI.svelte';
-	import { MainMenuStage } from './MainMenuStage.svelte';
+	import { useCore } from '$lib/core/Core.svelte';
+	import { initMenu } from './MenuState.svelte';
 </script>
 
 <script lang="ts">
-	const gui = GUI.fromContext();
-	const menu = new MainMenuStage();
+	const core = useCore();
+	const menu = initMenu();
 
 	const CurrentPage = $derived.by(() => {
-		switch (menu.stage) {
+		switch (menu.current) {
 			case 'home':
 				return HomePage;
 			case 'join':
@@ -28,7 +28,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			gui.dispatch('lobby');
+			core.gui.send('lobby.new');
 		}}
 	>
 		New Game
@@ -36,7 +36,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			menu.dispatch('join');
+			menu.send('open.join');
 		}}
 	>
 		Join Game
@@ -45,7 +45,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			menu.dispatch('settings');
+			menu.send('open.settings');
 		}}
 	>
 		Settings
@@ -53,7 +53,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			menu.dispatch('about');
+			menu.send('open.about');
 		}}
 	>
 		About
@@ -71,7 +71,7 @@
 		<MenuButton
 			accent="danger"
 			onclick={() => {
-				menu.dispatch('back');
+				menu.send('back');
 			}}
 		>
 			Cancel
@@ -97,7 +97,7 @@
 		<MenuButton
 			accent="danger"
 			onclick={() => {
-				menu.dispatch('back');
+				menu.send('back');
 			}}
 		>
 			Cancel
@@ -120,14 +120,14 @@
 	</div>
 	<MenuButton
 		onclick={() => {
-			menu.dispatch('back');
+			menu.send('back');
 		}}
 	>
 		Back
 	</MenuButton>
 {/snippet}
 
-{#key menu.stage}
+{#key menu.current}
 	<StageElement>
 		<MenuPage title={menu.title} titleSize={menu.size} children={CurrentPage} />
 	</StageElement>

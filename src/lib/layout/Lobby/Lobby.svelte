@@ -1,18 +1,16 @@
 <script lang="ts" module>
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
-	import { Game } from '$lib/logic/Game.svelte';
-	import { GUI } from '$lib/logic/GUI.svelte';
+	import { useCore } from '$lib/core/Core.svelte';
 	import GameModeSelect from './GameModeSelect.svelte';
 	import GameProfiles from './GameProfiles.svelte';
 	import LobbyPopUp from './LobbyPopUp.svelte';
-	import { PopUpStage } from './PopUpStage.svelte';
+	import { initPopUp } from './PopUpState.svelte';
 </script>
 
 <script lang="ts">
-	const game = Game.fromContext();
-	const gui = GUI.fromContext();
-	const popUp = new PopUpStage();
+	const core = useCore();
+	const popUp = initPopUp();
 </script>
 
 <StageElement>
@@ -30,23 +28,29 @@
 					size="sm"
 					accent="danger"
 					onclick={() => {
-						game.resetLobby();
-						gui.dispatch('quit');
+						core.game.resetLobby();
+						core.gui.send('lobby.quit');
 					}}>Quit</MenuButton
 				>
 				<MenuButton
 					size="sm"
 					onclick={() => {
-						popUp.dispatch('openPvE');
+						popUp.send('open.PvE');
 					}}>PvE</MenuButton
 				>
 				<MenuButton
 					size="sm"
 					onclick={() => {
-						popUp.dispatch('openPvP');
+						popUp.send('open.PvP');
 					}}>PvP</MenuButton
 				>
-				<MenuButton size="sm" accent="success">Start</MenuButton>
+				<MenuButton
+					size="sm"
+					accent="success"
+					onclick={() => {
+						// core.gui.dispatch('start');
+					}}>Start</MenuButton
+				>
 			</div>
 		</div>
 		<LobbyPopUp />

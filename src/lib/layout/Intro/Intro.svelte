@@ -1,12 +1,11 @@
 <script lang="ts" module>
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { GUI } from '$lib/logic/GUI.svelte';
+	import { useCore } from '$lib/core/Core.svelte';
 	import { debounce } from '$lib/utils/debounce';
-	import { sleep } from '$lib/utils/sleep';
 	import { onMount } from 'svelte';
 	import { blur, fly } from 'svelte/transition';
-	import { IntroStage } from './IntroStage.svelte';
+	import { initIntro } from './IntroState.svelte';
 
 	const INTRO_ANIMATION_DURATION = GLOBAL_ANIMATION_DURATION * 2;
 	const INTRO_ANIMATION_DELAY = 1500 + INTRO_ANIMATION_DURATION;
@@ -15,43 +14,40 @@
 </script>
 
 <script lang="ts">
-	const gui = GUI.fromContext();
-	const intro = new IntroStage(() => {
-		intro.done = true;
-		gui.dispatch('completed');
-	});
+	const core = useCore();
+	const intro = initIntro(() => {
+		core.gui.send('done');
+	}, INTRO_ANIMATION_DELAY);
 
-	onMount(async () => {
-		while (true) {
-			if (intro.done) return;
-			intro.dispatch('next');
-			await sleep(INTRO_ANIMATION_DELAY);
-		}
+	let showSkip = $state(false);
+
+	onMount(() => {
+		intro.send('start');
 	});
 </script>
 
 <svelte:window
 	onclick={debounce(250, () => {
-		if (!intro.showSkip) {
-			intro.showSkip = true;
+		if (!showSkip) {
+			showSkip = true;
 			setTimeout(() => {
-				intro.showSkip = false;
+				showSkip = false;
 			}, INTRO_HIDE_SKIP_DELAY);
 			return;
 		}
 
-		intro.completed();
+		intro.send('skip');
 	})}
 />
 
 <StageElement>
-	{#if intro.stage !== 'start'}
+	{#if intro.current !== 'loading'}
 		<div class="flex h-44 w-full max-w-3xl select-none gap-2">
 			<div class="w-28">
 				<h1 class="overflow-hidden whitespace-pre text-xl font-bold text-neutral-500">
 					<span>Made</span>
 					<span class="inline-grid grid-cols-1 grid-rows-1">
-						{#key intro.stage}
+						{#key intro.current}
 							<span
 								style="--color:{intro.color}"
 								class="col-start-1 row-start-1 text-[--color] underline underline-offset-2"
@@ -65,7 +61,7 @@
 				</h1>
 			</div>
 			<div class="grid flex-grow grid-cols-1 grid-rows-1">
-				{#key intro.stage}
+				{#key intro.current}
 					<div
 						class="col-start-1 row-start-1 grid w-full place-items-center"
 						transition:blur={{ duration: INTRO_ANIMATION_DURATION }}
@@ -75,7 +71,7 @@
 				{/key}
 			</div>
 		</div>
-		{#if intro.showSkip}
+		{#if showSkip}
 			<p
 				class="absolute bottom-0 left-0 select-none p-6 text-xl font-bold text-neutral-300"
 				transition:fly={{ duration: INTRO_ANIMATION_DURATION, y: 50 }}

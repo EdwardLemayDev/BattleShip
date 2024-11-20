@@ -1,12 +1,13 @@
 <script lang="ts" module>
 	import MenuToggle from '$lib/components/MenuToggle.svelte';
-	import { Game } from '$lib/logic/Game.svelte';
+	import { useCore } from '$lib/core/Core.svelte';
 	import { Dev } from '.';
 </script>
 
 <script lang="ts">
+	const core = useCore();
+
 	const dev = Dev && Dev.fromContext();
-	const game = Game.fromContext();
 </script>
 
 {#if dev}
@@ -45,9 +46,9 @@
 					{/snippet}
 				</MenuToggle>
 				<hr class="w-full border-neutral-700" />
-				<p>Game Mode: {game.mode}</p>
-				<p>Ally Name: {game.ally.name}</p>
-				<p>Ennemy Name: {game.ennemy.name}</p>
+				<p>Game Mode: {core.game.mode}</p>
+				<p>Ally Name: {core.game.ally.name}</p>
+				<p>Ennemy Name: {core.game.ennemy.name}</p>
 			</div>
 		{/if}
 	</div>

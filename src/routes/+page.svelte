@@ -1,35 +1,34 @@
 <script lang="ts" module>
 	import StageRoot from '$lib/components/StageRoot.svelte';
-	import { Dev, DevMenu } from '$lib/dev';
+	import { useCore } from '$lib/core/Core.svelte';
+	import GameBoard from '$lib/layout/Game/GameBoard.svelte';
 	import Intro from '$lib/layout/Intro/Intro.svelte';
 	import Loading from '$lib/layout/Loading.svelte';
 	import Lobby from '$lib/layout/Lobby/Lobby.svelte';
-	import MainMenu from '$lib/layout/MainMenu/MainMenu.svelte';
-	import { Game } from '$lib/logic/Game.svelte';
-	import { GUI } from '$lib/logic/GUI.svelte';
+	import Menu from '$lib/layout/Menu/Menu.svelte';
 	import { onMount } from 'svelte';
 </script>
 
 <script lang="ts">
-	const dev = Dev && new Dev();
-	const game = new Game();
-	const gui = new GUI();
+	const core = useCore();
 
 	const CurrentStage = $derived.by(() => {
-		switch (gui.stage) {
+		switch (core.gui.current) {
 			case 'loading':
 				return Loading;
 			case 'intro':
 				return Intro;
 			case 'menu':
-				return MainMenu;
+				return Menu;
 			case 'lobby':
 				return Lobby;
+			case 'game':
+				return GameBoard;
 		}
 	});
 
 	onMount(() => {
-		gui.dispatch('loaded');
+		core.gui.send('loaded');
 	});
 </script>
 
@@ -37,7 +36,7 @@
 	<title>Battleship</title>
 </svelte:head>
 
-<DevMenu />
+<!-- <DevMenu /> -->
 
 <StageRoot>
 	<CurrentStage />

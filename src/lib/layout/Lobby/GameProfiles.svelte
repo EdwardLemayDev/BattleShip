@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import { Game } from '$lib/logic/Game.svelte';
+	import { useCore } from '$lib/core/Core.svelte';
 	import { tw } from '$lib/utils/tw';
 
 	const ProfileStyles = {
@@ -31,7 +31,7 @@
 </script>
 
 <script lang="ts">
-	const game = Game.fromContext();
+	const core = useCore();
 </script>
 
 <div class="grid w-full select-none grid-cols-2 gap-4">
@@ -45,13 +45,13 @@
 			placeholder="- Fleet Name -"
 			maxlength="16"
 			autocomplete="off"
-			bind:value={game.ally.name}
+			bind:value={core.game.ally.name}
 		/>
 	</div>
 	<div class={tw(ProfileStyles.tile.base, ProfileStyles.tile.ennemy)}>
 		<p class={tw(ProfileStyles.title.base, ProfileStyles.title.ennemy)}>Ennemy Forces</p>
 		<p class={tw(ProfileStyles.fleetName.base, ProfileStyles.fleetName.ennemy)}>
-			{game.ennemy.name}
+			{core.game.ennemy.name}
 		</p>
 	</div>
 </div>
