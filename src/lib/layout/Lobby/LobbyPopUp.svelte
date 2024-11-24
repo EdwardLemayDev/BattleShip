@@ -2,21 +2,20 @@
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
 	import { useCore } from '$lib/core/Core.svelte';
+	import type { LobbyStates } from '$lib/core/States.svelte';
 	import { fade, scale } from 'svelte/transition';
-	import { usePopUp } from './PopUpState.svelte';
 </script>
 
 <script lang="ts">
-	const core = useCore();
-	const popUp = usePopUp();
+	const { states, events } = useCore();
 
 	const CurrentPopUp = $derived.by(() => {
-		switch (popUp.current) {
-			case 'closed':
+		switch (states.sub as LobbyStates) {
+			case 'home':
 				return undefined;
-			case 'PvE':
+			case 'pve':
 				return PvEPopUp;
-			case 'PvP':
+			case 'pvp':
 				return PvPPopUp;
 		}
 	});
@@ -30,31 +29,31 @@
 			size="sm"
 			accent="success"
 			onclick={() => {
-				core.game.ennemy.setMode('easy');
-				popUp.send('close');
+				// game.ennemy.setMode('easy');
+				events.back();
 			}}>Easy</MenuButton
 		>
 		<MenuButton
 			size="sm"
 			accent="warning"
 			onclick={() => {
-				core.game.ennemy.setMode('medium');
-				popUp.send('close');
+				// game.ennemy.setMode('medium');
+				events.back();
 			}}>Medium</MenuButton
 		>
 		<MenuButton
 			size="sm"
 			accent="danger"
 			onclick={() => {
-				core.game.ennemy.setMode('hard');
-				popUp.send('close');
+				// game.ennemy.setMode('hard');
+				events.back();
 			}}>Hard</MenuButton
 		>
 	</div>
 	<div class="grid w-full grid-cols-1">
 		<MenuButton
 			onclick={() => {
-				popUp.send('close');
+				events.back();
 			}}>Back</MenuButton
 		>
 	</div>
@@ -66,13 +65,13 @@
 	<div class="grid w-full grid-cols-1">
 		<MenuButton
 			onclick={() => {
-				popUp.send('close');
+				events.back();
 			}}>Back</MenuButton
 		>
 	</div>
 {/snippet}
 
-{#if popUp.current !== 'closed'}
+{#if states.sub !== 'home'}
 	<div
 		class="z-10 col-start-1 row-start-1 grid place-items-center bg-neutral-950/50 p-4 backdrop-blur"
 		transition:fade={{ duration: GLOBAL_ANIMATION_DURATION }}

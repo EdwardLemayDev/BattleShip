@@ -5,12 +5,10 @@
 	import GameModeSelect from './GameModeSelect.svelte';
 	import GameProfiles from './GameProfiles.svelte';
 	import LobbyPopUp from './LobbyPopUp.svelte';
-	import { initPopUp } from './PopUpState.svelte';
 </script>
 
 <script lang="ts">
-	const core = useCore();
-	const popUp = initPopUp();
+	const { events } = useCore();
 </script>
 
 <StageElement>
@@ -28,27 +26,26 @@
 					size="sm"
 					accent="danger"
 					onclick={() => {
-						core.game.resetLobby();
-						core.gui.send('lobby.quit');
+						events.back();
 					}}>Quit</MenuButton
 				>
 				<MenuButton
 					size="sm"
 					onclick={() => {
-						popUp.send('open.PvE');
+						events.open('pve');
 					}}>PvE</MenuButton
 				>
 				<MenuButton
 					size="sm"
 					onclick={() => {
-						popUp.send('open.PvP');
+						events.open('pvp');
 					}}>PvP</MenuButton
 				>
 				<MenuButton
 					size="sm"
 					accent="success"
 					onclick={() => {
-						// core.gui.dispatch('start');
+						events.start();
 					}}>Start</MenuButton
 				>
 			</div>

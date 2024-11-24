@@ -3,15 +3,47 @@
 	import MenuPage from '$lib/components/MenuPage.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { useCore } from '$lib/core/Core.svelte';
-	import { initMenu } from './MenuState.svelte';
+	import type { MenuStates } from '$lib/core/States.svelte';
+
+	class MenuMeta {
+		#current;
+
+		readonly title = $derived.by(() => {
+			switch (this.#current()) {
+				case 'home':
+					return 'Battleship';
+				case 'join':
+					return 'Join Game';
+				case 'settings':
+					return 'Settings';
+				case 'about':
+					return 'About';
+			}
+		});
+
+		readonly size = $derived.by(() => {
+			switch (this.#current()) {
+				case 'home':
+					return 'lg';
+				case 'join':
+				case 'settings':
+				case 'about':
+					return 'md';
+			}
+		});
+
+		constructor(current: () => MenuStates) {
+			this.#current = current;
+		}
+	}
 </script>
 
 <script lang="ts">
-	const core = useCore();
-	const menu = initMenu();
+	const { states, events } = useCore();
+	const meta = new MenuMeta(() => states.sub as MenuStates);
 
 	const CurrentPage = $derived.by(() => {
-		switch (menu.current) {
+		switch (states.sub as MenuStates) {
 			case 'home':
 				return HomePage;
 			case 'join':
@@ -28,7 +60,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			core.gui.send('lobby.new');
+			events.goto('lobby');
 		}}
 	>
 		New Game
@@ -36,7 +68,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			menu.send('open.join');
+			events.goto('join');
 		}}
 	>
 		Join Game
@@ -45,7 +77,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			menu.send('open.settings');
+			events.goto('settings');
 		}}
 	>
 		Settings
@@ -53,7 +85,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			menu.send('open.about');
+			events.goto('about');
 		}}
 	>
 		About
@@ -71,7 +103,7 @@
 		<MenuButton
 			accent="danger"
 			onclick={() => {
-				menu.send('back');
+				events.back();
 			}}
 		>
 			Cancel
@@ -97,7 +129,7 @@
 		<MenuButton
 			accent="danger"
 			onclick={() => {
-				menu.send('back');
+				events.back();
 			}}
 		>
 			Cancel
@@ -120,15 +152,15 @@
 	</div>
 	<MenuButton
 		onclick={() => {
-			menu.send('back');
+			events.back();
 		}}
 	>
 		Back
 	</MenuButton>
 {/snippet}
 
-{#key menu.current}
+{#key states.sub}
 	<StageElement>
-		<MenuPage title={menu.title} titleSize={menu.size} children={CurrentPage} />
+		<MenuPage title={meta.title} titleSize={meta.size} children={CurrentPage} />
 	</StageElement>
 {/key}

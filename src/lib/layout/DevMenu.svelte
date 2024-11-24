@@ -1,16 +1,18 @@
 <script lang="ts" module>
+	import { dev } from '$app/environment';
 	import MenuToggle from '$lib/components/MenuToggle.svelte';
 	import { useCore } from '$lib/core/Core.svelte';
-	import { Dev } from '.';
+	import { DevOptions } from '$lib/core/DevOptions.svelte';
 </script>
 
 <script lang="ts">
-	const core = useCore();
+	const { devOptions, states, meta } = useCore();
 
-	const dev = Dev && Dev.fromContext();
+	const DevSnippet = dev ? Dev : undefined;
 </script>
 
-{#if dev}
+{#snippet Dev()}
+	{@const dev = devOptions as DevOptions}
 	<div
 		class="absolute left-2 top-2 z-10 flex select-none flex-col items-start gap-1 p-1 font-bold text-neutral-200"
 	>
@@ -24,7 +26,7 @@
 		>
 			<span>D</span>
 			{#if dev.menuOpened}
-				<span>ev Config</span>
+				<span>ev Menu</span>
 			{/if}
 		</button>
 		{#if dev.menuOpened}
@@ -37,7 +39,7 @@
 						</span>
 					{/snippet}
 				</MenuToggle>
-				<MenuToggle bind:value={dev.newLobby}>
+				<MenuToggle bind:value={dev.autoLobby}>
 					{#snippet children(value)}
 						<span>Auto Lobby:</span>
 						<span class="underline">
@@ -46,10 +48,15 @@
 					{/snippet}
 				</MenuToggle>
 				<hr class="w-full border-neutral-700" />
-				<p>Game Mode: {core.game.mode}</p>
-				<p>Ally Name: {core.game.ally.name}</p>
-				<p>Ennemy Name: {core.game.ennemy.name}</p>
+				<p>Core: {states.main} - {states.sub}</p>
+				<p>Game Mode: {meta.gameMode}</p>
+				<hr class="w-full border-neutral-700" />
+				<p>Ally: {meta.allyName}</p>
+				<hr class="w-full border-neutral-700" />
+				<p>Ennemy: {meta.ennemyName}</p>
 			</div>
 		{/if}
 	</div>
-{/if}
+{/snippet}
+
+{@render DevSnippet?.()}

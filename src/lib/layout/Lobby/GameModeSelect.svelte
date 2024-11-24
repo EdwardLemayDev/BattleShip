@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
 	import { useCore } from '$lib/core/Core.svelte';
-	import type { GameMode } from '$lib/core/Game.svelte';
+	import type { GameMode } from '$lib/core/Meta.svelte';
 	import { tw } from '$lib/utils/tw';
 	import { fly } from 'svelte/transition';
 
@@ -51,7 +51,7 @@
 </script>
 
 <script lang="ts">
-	const core = useCore();
+	const { meta } = useCore();
 </script>
 
 <div class="flex w-full select-none flex-col gap-3.5 rounded-lg border border-neutral-800 p-3.5">
@@ -65,14 +65,14 @@
 					name="{name} mode"
 					id="{name}_mode_selector"
 					value={name}
-					bind:group={core.game.mode}
+					bind:group={meta.gameMode}
 				/>
 				<span class={tw(TextStyles.base, TextStyles[name])}>{name}</span>
 			</label>
 		{/each}
 	</div>
-	<div class={tw(DescriptionStyles.base, DescriptionStyles[core.game.mode])}>
-		{#key core.game.mode}
+	<div class={tw(DescriptionStyles.base, DescriptionStyles[meta.gameMode])}>
+		{#key meta.gameMode}
 			<p
 				class="col-start-1 row-start-1 overflow-y-auto"
 				in:fly={{
@@ -82,7 +82,7 @@
 				}}
 				out:fly={{ duration: GLOBAL_ANIMATION_DURATION, x: 75 }}
 			>
-				{ModeDescs[core.game.mode]}
+				{ModeDescs[meta.gameMode]}
 			</p>
 		{/key}
 	</div>

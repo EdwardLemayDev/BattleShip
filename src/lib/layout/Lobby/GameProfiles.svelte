@@ -31,7 +31,7 @@
 </script>
 
 <script lang="ts">
-	const core = useCore();
+	const { meta } = useCore();
 </script>
 
 <div class="grid w-full select-none grid-cols-2 gap-4">
@@ -45,13 +45,13 @@
 			placeholder="- Fleet Name -"
 			maxlength="16"
 			autocomplete="off"
-			bind:value={core.game.ally.name}
+			bind:value={meta.allyName}
 		/>
 	</div>
 	<div class={tw(ProfileStyles.tile.base, ProfileStyles.tile.ennemy)}>
 		<p class={tw(ProfileStyles.title.base, ProfileStyles.title.ennemy)}>Ennemy Forces</p>
 		<p class={tw(ProfileStyles.fleetName.base, ProfileStyles.fleetName.ennemy)}>
-			{core.game.ennemy.name}
+			{meta.ennemyName}
 		</p>
 	</div>
 </div>
