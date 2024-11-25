@@ -3,14 +3,27 @@ import { FiniteStateMachine } from 'runed';
 import { getContext, hasContext, setContext } from 'svelte';
 import { DevOptions } from './DevOptions.svelte';
 import {
-	CoreEvents,
-	isGotoOption,
-	type CoreActions,
-	type Events,
-	type PopUpOptions
-} from './Events.svelte';
-import { CoreMeta } from './Meta.svelte';
-import { CoreStates, type States } from './States.svelte';
+	initIntroTransitions,
+	IntroApi,
+	type IntroEvents,
+	type IntroStates
+} from './logic/intro.svelte';
+import { initLobbyTransitions, LobbyApi, type LobbyStates } from './logic/lobby.svelte';
+import {
+	initMenuTransitions,
+	MenuApi,
+	type MenuEvents,
+	type MenuStates
+} from './logic/menu.svelte';
+import type { ModuleContext } from './logic/module';
+
+export type CoreStates = 'loading' | IntroStates | MenuStates | LobbyStates;
+
+export type CoreEvents = 'loaded' | IntroEvents | MenuEvents;
+
+export type CoreLogic = FiniteStateMachine<CoreStates, CoreEvents>;
+
+export type CoreInstance = ReturnType<typeof initCore>;
 
 const CONTEXT_KEY = Symbol('CORE_CONTEXT');
 
@@ -23,108 +36,63 @@ export function useCore(): CoreInstance | never {
 	throw new Error('Core context is undefined');
 }
 
-export type CoreInstance = ReturnType<typeof initCore>;
-export type CoreLogic = FiniteStateMachine<States, Events>;
-
 class Core {
-	#logic: CoreLogic;
+	readonly #logic: CoreLogic;
 
 	readonly devOptions?: DevOptions;
-	readonly states: CoreStates;
-	readonly events: CoreEvents;
-	readonly meta: CoreMeta;
+	readonly states: States;
+
+	readonly intro: IntroApi;
+	readonly menu: MenuApi;
+	readonly lobby: LobbyApi;
+
+	loaded = () => {
+		this.#logic.send('loaded');
+	};
 
 	constructor() {
 		if (dev) this.devOptions = new DevOptions();
 
-		const app_loaded: CoreActions = dev
-			? () => {
-					if (this.devOptions?.skipIntro) {
-						return this.devOptions.autoLobby ? 'lobby.home' : 'menu.home';
-					}
-					return 'intro.pending';
-				}
-			: 'intro.pending';
-
-		const intro_done: CoreActions = dev
-			? () => {
-					return this.devOptions?.autoLobby ? 'lobby.home' : 'menu.home';
-				}
-			: 'menu.home';
-
-		const noop: CoreActions = () => {};
-
-		this.#logic = new FiniteStateMachine<States, Events>('loading', {
-			loading: { loaded: app_loaded },
-
-			'intro.pending': {
-				start: (delay) => {
-					this.#logic.debounce(delay as number, 'next', delay);
-					return 'intro.svelte';
-				}
-			},
-			'intro.svelte': {
-				next: (delay) => {
-					this.#logic.debounce(delay as number, 'next', delay);
-					return 'intro.tailwindcss';
-				},
-				done: intro_done
-			},
-			'intro.tailwindcss': {
-				next: (delay) => {
-					this.#logic.debounce(delay as number, 'done');
-					return 'intro.author';
-				},
-				done: intro_done
-			},
-			'intro.author': {
-				done: intro_done
-			},
-
-			'menu.home': {
-				goto: (page) => {
-					if (!isGotoOption(page)) return;
-
-					switch (page) {
-						case 'lobby':
-							return 'lobby.home';
-						default:
-							return `menu.${page}`;
-					}
-				}
-			},
-			'menu.join': {
-				back: 'menu.home'
-			},
-			'menu.settings': {
-				back: 'menu.home'
-			},
-			'menu.about': {
-				back: 'menu.home'
-			},
-
-			'lobby.home': {
-				back: 'menu.home',
-				open: (popUp) => `lobby.${popUp as PopUpOptions}`,
-				start: 'game.idle'
-			},
-			'lobby.pve': {
-				back: 'lobby.home'
-			},
-			'lobby.pvp': {
-				back: 'lobby.home'
-			},
-
-			'game.idle': {},
-
-			'*': {
-				next: noop,
-				done: noop
-			}
+		const context: ModuleContext = Object.freeze({
+			core: this,
+			send: (...args) => this.#logic.send(...args),
+			debounce: async (...args) => await this.#logic.debounce(...args)
 		});
 
-		this.states = new CoreStates(this.#logic);
-		this.events = new CoreEvents(this.#logic);
-		this.meta = new CoreMeta();
+		this.#logic = new FiniteStateMachine<CoreStates, CoreEvents>('loading', {
+			loading: {
+				loaded: dev
+					? () => {
+							if (this.devOptions?.skipIntro) {
+								return this.devOptions.autoLobby ? 'lobby_home' : 'menu_home';
+							}
+							return 'intro_pending';
+						}
+					: 'intro_pending'
+			},
+			...initIntroTransitions(context),
+			...initMenuTransitions(context),
+			...initLobbyTransitions(context)
+		});
+
+		this.states = new States(this.#logic);
+
+		this.intro = new IntroApi(context);
+		this.menu = new MenuApi(context);
+		this.lobby = new LobbyApi(context);
+	}
+}
+
+class States {
+	#core: CoreLogic;
+	readonly #states = $derived.by(() => {
+		return this.#core.current.split('_') as Split<CoreStates, '_'>;
+	});
+
+	readonly main = $derived.by(() => this.#states[0]);
+	readonly sub = $derived.by(() => this.#states[1]);
+
+	constructor(core: CoreLogic) {
+		this.#core = core;
 	}
 }

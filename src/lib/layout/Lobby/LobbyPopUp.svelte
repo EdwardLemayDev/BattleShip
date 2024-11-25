@@ -29,24 +29,21 @@
 			size="sm"
 			accent="success"
 			onclick={() => {
-				// game.ennemy.setMode('easy');
-				events.back();
+				events.setBot('easy');
 			}}>Easy</MenuButton
 		>
 		<MenuButton
 			size="sm"
 			accent="warning"
 			onclick={() => {
-				// game.ennemy.setMode('medium');
-				events.back();
+				events.setBot('medium');
 			}}>Medium</MenuButton
 		>
 		<MenuButton
 			size="sm"
 			accent="danger"
 			onclick={() => {
-				// game.ennemy.setMode('hard');
-				events.back();
+				events.setBot('hard');
 			}}>Hard</MenuButton
 		>
 	</div>

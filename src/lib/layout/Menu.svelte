@@ -3,7 +3,7 @@
 	import MenuPage from '$lib/components/MenuPage.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { useCore } from '$lib/core/Core.svelte';
-	import type { MenuStates } from '$lib/core/States.svelte';
+	import type { MenuSubStates } from '$lib/core/logic/menu.svelte';
 
 	class MenuMeta {
 		#current;
@@ -32,18 +32,18 @@
 			}
 		});
 
-		constructor(current: () => MenuStates) {
+		constructor(current: () => MenuSubStates) {
 			this.#current = current;
 		}
 	}
 </script>
 
 <script lang="ts">
-	const { states, events } = useCore();
-	const meta = new MenuMeta(() => states.sub as MenuStates);
+	const { states, menu } = useCore();
+	const meta = new MenuMeta(() => states.sub as MenuSubStates);
 
 	const CurrentPage = $derived.by(() => {
-		switch (states.sub as MenuStates) {
+		switch (states.sub as MenuSubStates) {
 			case 'home':
 				return HomePage;
 			case 'join':
@@ -60,7 +60,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			events.goto('lobby');
+			menu.goto('lobby');
 		}}
 	>
 		New Game
@@ -68,7 +68,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			events.goto('join');
+			menu.goto('join');
 		}}
 	>
 		Join Game
@@ -77,7 +77,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			events.goto('settings');
+			menu.goto('settings');
 		}}
 	>
 		Settings
@@ -85,7 +85,7 @@
 	<MenuButton
 		size="lg"
 		onclick={() => {
-			events.goto('about');
+			menu.goto('about');
 		}}
 	>
 		About
@@ -103,7 +103,7 @@
 		<MenuButton
 			accent="danger"
 			onclick={() => {
-				events.back();
+				menu.back();
 			}}
 		>
 			Cancel
@@ -129,7 +129,7 @@
 		<MenuButton
 			accent="danger"
 			onclick={() => {
-				events.back();
+				menu.back();
 			}}
 		>
 			Cancel
@@ -152,7 +152,7 @@
 	</div>
 	<MenuButton
 		onclick={() => {
-			events.back();
+			menu.back();
 		}}
 	>
 		Back

@@ -2,7 +2,7 @@
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
 	import { useCore } from '$lib/core/Core.svelte';
-	import type { IntroStates } from '$lib/core/States.svelte';
+	import type { IntroSubStates } from '$lib/core/logic/intro.svelte';
 	import { useThrottle } from '$lib/utils/useThrottle';
 	import { onMount } from 'svelte';
 	import { blur, fly } from 'svelte/transition';
@@ -59,18 +59,18 @@
 			}
 		});
 
-		constructor(current: () => IntroStates) {
+		constructor(current: () => IntroSubStates) {
 			this.#current = current;
 		}
 	}
 </script>
 
 <script lang="ts">
-	const { states, events } = useCore();
-	const meta = new IntroMeta(() => states.sub as IntroStates);
+	const { states, intro } = useCore();
+	const meta = new IntroMeta(() => states.sub as IntroSubStates);
 
 	onMount(() => {
-		events.start(INTRO_ANIMATION_DELAY);
+		intro.start(INTRO_ANIMATION_DELAY);
 	});
 
 	const skipIntro = useThrottle(() => {
@@ -82,7 +82,7 @@
 			return;
 		}
 
-		events.done();
+		intro.skip();
 	}, 250);
 </script>
 

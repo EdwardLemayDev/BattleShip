@@ -6,7 +6,7 @@
 </script>
 
 <script lang="ts">
-	const { devOptions, states, meta } = useCore();
+	const { devOptions, states } = useCore();
 
 	const DevSnippet = dev ? Dev : undefined;
 </script>
@@ -49,11 +49,12 @@
 				</MenuToggle>
 				<hr class="w-full border-neutral-700" />
 				<p>Core: {states.main} - {states.sub}</p>
-				<p>Game Mode: {meta.gameMode}</p>
+				<!-- <p>Game Mode: {meta.gameMode}</p>
 				<hr class="w-full border-neutral-700" />
 				<p>Ally: {meta.allyName}</p>
 				<hr class="w-full border-neutral-700" />
 				<p>Ennemy: {meta.ennemyName}</p>
+				<p>Type: {meta.ennemyType}</p> -->
 			</div>
 		{/if}
 	</div>
