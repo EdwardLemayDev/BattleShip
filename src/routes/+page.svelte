@@ -3,6 +3,7 @@
 	import { useCore } from '$lib/core/Core.svelte';
 	import Intro from '$lib/layout/Intro.svelte';
 	import Loading from '$lib/layout/Loading.svelte';
+	import Lobby from '$lib/layout/Lobby/Lobby.svelte';
 	import Menu from '$lib/layout/Menu.svelte';
 	import { onMount } from 'svelte';
 </script>
@@ -18,8 +19,8 @@
 				return Intro;
 			case 'menu':
 				return Menu;
-			// case 'lobby':
-			// 	return Lobby;
+			case 'lobby':
+				return Lobby;
 			// case 'game':
 			// 	return GameBoard;
 		}

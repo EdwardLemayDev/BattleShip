@@ -2,15 +2,15 @@
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
 	import { useCore } from '$lib/core/Core.svelte';
-	import type { LobbyStates } from '$lib/core/States.svelte';
+	import type { LobbySubStates } from '$lib/core/logic/lobby.svelte';
 	import { fade, scale } from 'svelte/transition';
 </script>
 
 <script lang="ts">
-	const { states, events } = useCore();
+	const { states, lobby } = useCore();
 
 	const CurrentPopUp = $derived.by(() => {
-		switch (states.sub as LobbyStates) {
+		switch (states.sub as LobbySubStates) {
 			case 'home':
 				return undefined;
 			case 'pve':
@@ -29,28 +29,28 @@
 			size="sm"
 			accent="success"
 			onclick={() => {
-				events.setBot('easy');
+				// events.setBot('easy');
 			}}>Easy</MenuButton
 		>
 		<MenuButton
 			size="sm"
 			accent="warning"
 			onclick={() => {
-				events.setBot('medium');
+				// events.setBot('medium');
 			}}>Medium</MenuButton
 		>
 		<MenuButton
 			size="sm"
 			accent="danger"
 			onclick={() => {
-				events.setBot('hard');
+				// events.setBot('hard');
 			}}>Hard</MenuButton
 		>
 	</div>
 	<div class="grid w-full grid-cols-1">
 		<MenuButton
 			onclick={() => {
-				events.back();
+				lobby.back();
 			}}>Back</MenuButton
 		>
 	</div>
@@ -62,7 +62,7 @@
 	<div class="grid w-full grid-cols-1">
 		<MenuButton
 			onclick={() => {
-				events.back();
+				lobby.back();
 			}}>Back</MenuButton
 		>
 	</div>

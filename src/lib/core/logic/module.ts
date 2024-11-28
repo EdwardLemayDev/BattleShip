@@ -20,6 +20,6 @@ export type ModuleContext = {
 	readonly debounce: CoreLogic['debounce'];
 };
 
-export const newTransitionModule = <StatesT extends string, EventsT extends string>(
-	constructor: (context: ModuleContext) => CoreTransition<StatesT, EventsT>
-) => constructor;
+export type ApiType<FnT extends (...args: any[]) => readonly any[]> = InstanceType<
+	ReturnType<FnT>[1]
+>;

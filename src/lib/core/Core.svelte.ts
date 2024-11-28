@@ -3,26 +3,30 @@ import { FiniteStateMachine } from 'runed';
 import { getContext, hasContext, setContext } from 'svelte';
 import { DevOptions } from './DevOptions.svelte';
 import {
-	initIntroTransitions,
-	IntroApi,
+	initIntroModule,
+	type IntroApi,
 	type IntroEvents,
 	type IntroStates
 } from './logic/intro.svelte';
-import { initLobbyTransitions, LobbyApi, type LobbyStates } from './logic/lobby.svelte';
 import {
-	initMenuTransitions,
-	MenuApi,
+	initLobbyModule,
+	type LobbyApi,
+	type LobbyEvents,
+	type LobbyStates
+} from './logic/lobby.svelte';
+import {
+	initMenuModule,
+	type MenuApi,
 	type MenuEvents,
 	type MenuStates
 } from './logic/menu.svelte';
 import type { ModuleContext } from './logic/module';
+import { initStates, type CoreStatesObject } from './States.svelte';
 
 export type CoreStates = 'loading' | IntroStates | MenuStates | LobbyStates;
-
-export type CoreEvents = 'loaded' | IntroEvents | MenuEvents;
+export type CoreEvents = 'loaded' | IntroEvents | MenuEvents | LobbyEvents;
 
 export type CoreLogic = FiniteStateMachine<CoreStates, CoreEvents>;
-
 export type CoreInstance = ReturnType<typeof initCore>;
 
 const CONTEXT_KEY = Symbol('CORE_CONTEXT');
@@ -40,7 +44,7 @@ class Core {
 	readonly #logic: CoreLogic;
 
 	readonly devOptions?: DevOptions;
-	readonly states: States;
+	readonly states: CoreStatesObject;
 
 	readonly intro: IntroApi;
 	readonly menu: MenuApi;
@@ -59,6 +63,10 @@ class Core {
 			debounce: async (...args) => await this.#logic.debounce(...args)
 		});
 
+		const [introTransitions, IntroApi] = initIntroModule(context);
+		const [menuTransitions, MenuApi] = initMenuModule(context);
+		const [lobbyTransitions, LobbyApi] = initLobbyModule(context);
+
 		this.#logic = new FiniteStateMachine<CoreStates, CoreEvents>('loading', {
 			loading: {
 				loaded: dev
@@ -70,29 +78,16 @@ class Core {
 						}
 					: 'intro_pending'
 			},
-			...initIntroTransitions(context),
-			...initMenuTransitions(context),
-			...initLobbyTransitions(context)
+			...introTransitions,
+			...menuTransitions,
+			...lobbyTransitions,
+			'*': {}
 		});
 
-		this.states = new States(this.#logic);
+		this.states = initStates(() => this.#logic.current);
 
-		this.intro = new IntroApi(context);
-		this.menu = new MenuApi(context);
-		this.lobby = new LobbyApi(context);
-	}
-}
-
-class States {
-	#core: CoreLogic;
-	readonly #states = $derived.by(() => {
-		return this.#core.current.split('_') as Split<CoreStates, '_'>;
-	});
-
-	readonly main = $derived.by(() => this.#states[0]);
-	readonly sub = $derived.by(() => this.#states[1]);
-
-	constructor(core: CoreLogic) {
-		this.#core = core;
+		this.intro = new IntroApi();
+		this.menu = new MenuApi();
+		this.lobby = new LobbyApi();
 	}
 }

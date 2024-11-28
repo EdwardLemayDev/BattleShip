@@ -2,13 +2,11 @@
 	import MenuButton from '$lib/components/MenuButton.svelte';
 	import StageElement from '$lib/components/StageElement.svelte';
 	import { useCore } from '$lib/core/Core.svelte';
-	import GameModeSelect from './GameModeSelect.svelte';
-	import GameProfiles from './GameProfiles.svelte';
 	import LobbyPopUp from './LobbyPopUp.svelte';
 </script>
 
 <script lang="ts">
-	const { events } = useCore();
+	const { lobby } = useCore();
 </script>
 
 <StageElement>
@@ -17,8 +15,8 @@
 			<h1 class="mb-4 select-none text-center text-5xl font-bold tracking-widest text-neutral-200">
 				Game Lobby
 			</h1>
-			<GameModeSelect />
-			<GameProfiles />
+			<!-- <GameModeSelect /> -->
+			<!-- <GameProfiles /> -->
 			<div
 				class="grid w-full select-none grid-cols-4 rounded-md border border-neutral-800 p-2 text-center"
 			>
@@ -26,26 +24,26 @@
 					size="sm"
 					accent="danger"
 					onclick={() => {
-						events.back();
+						lobby.quit();
 					}}>Quit</MenuButton
 				>
 				<MenuButton
 					size="sm"
 					onclick={() => {
-						events.open('pve');
+						lobby.popUp('pve');
 					}}>PvE</MenuButton
 				>
 				<MenuButton
 					size="sm"
 					onclick={() => {
-						events.open('pvp');
+						lobby.popUp('pvp');
 					}}>PvP</MenuButton
 				>
 				<MenuButton
 					size="sm"
 					accent="success"
 					onclick={() => {
-						events.start();
+						// events.start();
 					}}>Start</MenuButton
 				>
 			</div>

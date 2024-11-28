@@ -1,16 +1,19 @@
-import { newTransitionModule, type ModuleContext } from './module';
+import { type ApiType, type CoreAction, type CoreTransition, type ModuleContext } from './module';
 
 export type MenuStates = `menu_${MenuSubStates}`;
 export type MenuSubStates = 'home' | 'join' | 'settings' | 'about';
 
 export type MenuEvents = `menu_${'goto' | 'back'}`;
 
+export type MenuTransitions = CoreTransition<MenuStates, MenuEvents>;
+export type MenuApi = ApiType<typeof initMenuModule>;
+
 export type MenuOptions = Exclude<MenuSubStates, 'home'> | 'lobby';
 
-export const initMenuTransitions = newTransitionModule<MenuStates, MenuEvents>(() => {
-	const menu_back = 'menu_home';
+export function initMenuModule({ send }: ModuleContext) {
+	const menu_back: CoreAction = 'menu_home';
 
-	return {
+	const transitions: MenuTransitions = {
 		menu_home: {
 			menu_goto: (_option) => {
 				const option = _option as MenuOptions;
@@ -31,19 +34,15 @@ export const initMenuTransitions = newTransitionModule<MenuStates, MenuEvents>((
 		menu_settings: { menu_back },
 		menu_about: { menu_back }
 	};
-});
 
-export class MenuApi {
-	#send: ModuleContext['send'];
+	const api = class MenuApi {
+		goto(option: MenuOptions) {
+			send('menu_goto', option);
+		}
+		back() {
+			send('menu_back');
+		}
+	};
 
-	constructor({ send }: ModuleContext) {
-		this.#send = send;
-	}
-
-	goto(option: MenuOptions) {
-		this.#send('menu_goto', option);
-	}
-	back() {
-		this.#send('menu_back');
-	}
+	return [transitions, api] as const;
 }
