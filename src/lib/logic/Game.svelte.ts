@@ -1,36 +1,13 @@
-import { getContext, hasContext, setContext } from 'svelte';
-
-const CONTEXT_KEY = Symbol();
+import { useContext } from '$lib/utils/context';
 
 export type GameStage = 'LOADING' | 'INTRO' | 'MENU' | 'LOBBY';
 
 export type GameMode = 'Classic' | 'Salvo' | 'Bonus' | 'Special';
 
-export class GameLogic {
-	static fromContext(): GameLogic | never {
-		if (hasContext(CONTEXT_KEY)) return getContext<GameLogic>(CONTEXT_KEY);
-		throw new Error('GameLogic was not initialized yet');
+export const [initGameLogic, useGameLogic] = useContext(Symbol('GameLogic Context'), () => {
+	class GameLogic {
+		gameMode: GameMode = $state('Classic');
 	}
 
-	#stage: GameStage = $state('LOADING');
-	get stage() {
-		return this.#stage;
-	}
-
-	gameMode: GameMode = $state('Classic');
-
-	constructor() {
-		setContext(CONTEXT_KEY, this);
-	}
-
-	loaded() {
-		this.#stage = 'INTRO';
-	}
-	introCompleted() {
-		this.#stage = 'MENU';
-	}
-
-	createLobby() {
-		this.#stage = 'LOBBY';
-	}
-}
+	return new GameLogic();
+});

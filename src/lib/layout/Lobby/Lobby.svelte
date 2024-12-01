@@ -1,13 +1,10 @@
 <script lang="ts" module>
 	import StageElement from '$lib/components/StageElement.svelte';
-	import { GameLogic } from '$lib/logic/Game.svelte';
 	import GameModeSelect from './GameModeSelect.svelte';
 	import GameProfiles from './GameProfiles.svelte';
 </script>
 
-<script lang="ts">
-	const game = GameLogic.fromContext();
-</script>
+<script lang="ts"></script>
 
 <StageElement>
 	<div class="flex w-full max-w-xl flex-col items-center gap-4 rounded-xl">

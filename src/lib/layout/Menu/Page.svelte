@@ -2,7 +2,7 @@
 	import { tw } from '$lib/utils/tw';
 	import { type Snippet } from 'svelte';
 
-	export type MenuPageProps = {
+	export type PageProps = {
 		title: string;
 		align?: 'left' | 'center' | 'right';
 		titleSize?: 'sm' | 'md' | 'lg';
@@ -24,7 +24,7 @@
 </script>
 
 <script lang="ts">
-	let { title, titleSize = 'md', children }: MenuPageProps = $props();
+	let { title, titleSize = 'md', children }: PageProps = $props();
 
 	const titleClasses = $derived(tw(titleStyles.base, titleStyles.size[titleSize]));
 </script>
