@@ -4,7 +4,37 @@
 	import { useThrottle } from '$lib/utils/throttle';
 	import { onMount } from 'svelte';
 	import { blur, fly } from 'svelte/transition';
-	import { initIntro } from './logic.svelte';
+	import { initIntro, type IntroStates } from './logic.svelte';
+
+	const INTRO_META: Record<
+		IntroStates,
+		{
+			color: string;
+			tag: string;
+			src: string;
+			alt: string;
+		} | null
+	> = {
+		pending: null,
+		svelte: {
+			color: '#ff3e00',
+			tag: 'with',
+			src: '/svelte-horizontal.svg',
+			alt: 'Svelte official horizontal logo'
+		},
+		tailwindcss: {
+			color: '#38bdf8',
+			tag: 'with',
+			src: '/tailwindcss-logotype-white.svg',
+			alt: 'Tailwindcss official white logo'
+		},
+		author: {
+			color: '#BA2D2D',
+			tag: 'by',
+			src: '/edle-v1.svg',
+			alt: 'Personal logo from author Edward'
+		}
+	};
 
 	const INTRO_ANIMATION_DURATION = GLOBAL_ANIMATION_DURATION * 2;
 	const INTRO_ANIMATION_DELAY = 1500 + INTRO_ANIMATION_DURATION;
@@ -21,7 +51,8 @@
 
 	onMount(() => intro.start());
 
-	let showSkipMessage = false;
+	let showSkipMessage = $state(false);
+	const meta = $derived(INTRO_META[intro.state]);
 
 	const skipIntro = useThrottle(() => {
 		if (intro.completed) return;
@@ -37,30 +68,31 @@
 
 <svelte:window onclick={skipIntro} />
 
-{#if intro.meta}
+{#if meta}
+	{@const { color, tag, src, alt } = meta}
 	<div class="flex h-44 w-full max-w-3xl select-none gap-2">
 		<h1
 			class="relative h-fit w-28 overflow-hidden whitespace-pre text-xl font-bold text-neutral-500"
 		>
 			<span>Made</span>
-			{#key intro.state}
+			{#key meta}
 				<span
-					style:--color={intro.meta.color}
+					style:--color={color}
 					class="absolute text-[--color] underline underline-offset-2"
 					in:fly={{ duration: INTRO_ANIMATION_DURATION, y: -50 }}
 					out:fly={{ duration: INTRO_ANIMATION_DURATION, y: 50 }}
 				>
-					{intro.meta.tag}
+					{tag}
 				</span>
 			{/key}
 		</h1>
 		<div class="relative grow">
-			{#key intro.state}
+			{#key meta}
 				<div
 					class="absolute inset-0 grid place-items-center"
 					transition:blur={{ duration: INTRO_ANIMATION_DURATION }}
 				>
-					<img class="w-full" src={intro.meta.src} alt={intro.meta.alt} draggable="false" />
+					<img class="w-full" {src} {alt} draggable="false" />
 				</div>
 			{/key}
 		</div>

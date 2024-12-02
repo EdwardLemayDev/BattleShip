@@ -54,34 +54,6 @@ export function initIntro({ onDone, delay }: { onDone: () => void; delay: number
 			return introCompleted;
 		}
 
-		readonly meta = $derived.by(() => {
-			switch (STATE.current) {
-				case 'pending':
-					return null;
-				case 'svelte':
-					return {
-						color: '#ff3e00',
-						tag: 'with',
-						src: '/svelte-horizontal.svg',
-						alt: 'Svelte official horizontal logo'
-					};
-				case 'tailwindcss':
-					return {
-						color: '#38bdf8',
-						tag: 'with',
-						src: '/tailwindcss-logotype-white.svg',
-						alt: 'Tailwindcss official white logo'
-					};
-				case 'author':
-					return {
-						color: '#BA2D2D',
-						tag: 'by',
-						src: '/edle-v1.svg',
-						alt: 'Personal logo from author Edward'
-					};
-			}
-		});
-
 		start() {
 			STATE.send('start');
 		}

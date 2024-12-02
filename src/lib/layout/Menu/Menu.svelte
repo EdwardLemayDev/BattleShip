@@ -4,7 +4,14 @@
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
 	import { useCoreLogic } from '$lib/logic/Core.svelte';
 	import { blur } from 'svelte/transition';
-	import { initMenu } from './logic.svelte';
+	import { initMenu, type MenuStates } from './logic.svelte';
+
+	const MENU_TITLE: Record<MenuStates, string> = {
+		home: 'Battleship',
+		join: 'Join Game',
+		settings: 'Settings',
+		about: 'About'
+	};
 
 	const LOCAL_ANIMATION_DURATION = GLOBAL_ANIMATION_DURATION * 0.75;
 	const LOCAL_ANIMATION_DELAY = LOCAL_ANIMATION_DURATION * 0.4;
@@ -14,18 +21,7 @@
 	const core = useCoreLogic();
 	const menu = initMenu();
 
-	const title = $derived.by(() => {
-		switch (menu.page) {
-			case 'home':
-				return 'Battleship';
-			case 'join':
-				return 'Join Game';
-			case 'settings':
-				return 'Settings';
-			case 'about':
-				return 'About';
-		}
-	});
+	const title = $derived(MENU_TITLE[menu.page]);
 </script>
 
 {#key menu.page}
