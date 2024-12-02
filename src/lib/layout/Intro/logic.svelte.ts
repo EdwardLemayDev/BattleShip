@@ -50,6 +50,9 @@ export function initIntro({ onDone, delay }: { onDone: () => void; delay: number
 		get state() {
 			return STATE.current;
 		}
+		get completed() {
+			return introCompleted;
+		}
 
 		readonly meta = $derived.by(() => {
 			switch (STATE.current) {
@@ -78,8 +81,6 @@ export function initIntro({ onDone, delay }: { onDone: () => void; delay: number
 					};
 			}
 		});
-
-		showSkipMessage = $state(false);
 
 		start() {
 			STATE.send('start');

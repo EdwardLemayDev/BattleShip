@@ -1,27 +1,52 @@
 <script lang="ts" module>
 	import MenuButton from '$lib/components/MenuButton.svelte';
-	import StageElement from '$lib/components/StageElement.svelte';
 	import Switch from '$lib/components/Switch.svelte';
-	import { useGUI } from '$lib/game/GUI.svelte';
-	import Page from '$lib/layout/Menu/Page.svelte';
+	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
+	import { useCoreLogic } from '$lib/logic/Core.svelte';
+	import { blur } from 'svelte/transition';
 	import { initMenu } from './logic.svelte';
+
+	const LOCAL_ANIMATION_DURATION = GLOBAL_ANIMATION_DURATION * 0.75;
+	const LOCAL_ANIMATION_DELAY = LOCAL_ANIMATION_DURATION * 0.4;
 </script>
 
 <script lang="ts">
-	const gui = useGUI();
+	const core = useCoreLogic();
 	const menu = initMenu();
+
+	const title = $derived.by(() => {
+		switch (menu.page) {
+			case 'home':
+				return 'Battleship';
+			case 'join':
+				return 'Join Game';
+			case 'settings':
+				return 'Settings';
+			case 'about':
+				return 'About';
+		}
+	});
 </script>
 
 {#key menu.page}
-	<StageElement>
-		<Page title={menu.meta.title} titleSize={menu.meta.size}>
+	<div
+		class="col-start-1 row-start-1 flex w-full max-w-xl flex-col items-center gap-10"
+		in:blur={{ duration: LOCAL_ANIMATION_DURATION, delay: LOCAL_ANIMATION_DELAY }}
+		out:blur={{ duration: LOCAL_ANIMATION_DURATION }}
+	>
+		<h1
+			class="flex min-h-24 select-none items-center justify-center text-7xl font-bold tracking-widest text-neutral-100"
+		>
+			{title}
+		</h1>
+		<div class="flex min-h-72 w-full max-w-md flex-col gap-2">
 			<Switch value={menu.page}>
 				{#snippet home()}
 					<!-- New Game will change from Menu to Lobby instead of being a page -->
 					<MenuButton
 						size="lg"
 						onclick={() => {
-							gui.newLobby();
+							core.createLobby();
 						}}>New Game</MenuButton
 					>
 					<MenuButton
@@ -118,6 +143,6 @@
 					</MenuButton>
 				{/snippet}
 			</Switch>
-		</Page>
-	</StageElement>
+		</div>
+	</div>
 {/key}

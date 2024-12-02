@@ -1,12 +1,12 @@
 <script lang="ts" module>
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { useGameLogic, type GameMode } from '$lib/logic/Game.svelte';
+	import { useGameLogic, type GameModes } from '$lib/logic/Game.svelte';
 	import { tw } from '$lib/utils/tw';
 	import { fly } from 'svelte/transition';
 
-	const GameModes: GameMode[] = ['Classic', 'Salvo', 'Bonus', 'Special'];
+	const GameModeList: GameModes[] = ['Classic', 'Salvo', 'Bonus', 'Special'];
 
-	const ModeDescs: Record<GameMode, string> = {
+	const ModeDescs: Record<GameModes, string> = {
 		Classic: 'Classic description. This is a quick description of the game mode selected.',
 		Salvo: 'Salvo description. This is a quick description of the game mode selected.',
 		Bonus: 'Bonus description. This is a quick description of the game mode selected.',
@@ -56,7 +56,7 @@
 <div class="flex w-full select-none flex-col gap-3.5 rounded-lg border border-neutral-800 p-3.5">
 	<h2 class="w-full text-center text-2xl font-bold tracking-wider text-neutral-400">Missions</h2>
 	<div class="grid grid-cols-4 gap-1">
-		{#each GameModes as name}
+		{#each GameModeList as name}
 			<label class="grid cursor-pointer grid-cols-1 grid-rows-1">
 				<input
 					class={tw(InputStyles.base, InputStyles[name])}
@@ -64,14 +64,14 @@
 					name="{name} mode"
 					id="{name}_mode_selector"
 					value={name}
-					bind:group={game.gameMode}
+					bind:group={game.mode}
 				/>
 				<span class={tw(TextStyles.base, TextStyles[name])}>{name}</span>
 			</label>
 		{/each}
 	</div>
-	<div class={tw(DescriptionStyles.base, DescriptionStyles[game.gameMode])}>
-		{#key game.gameMode}
+	<div class={tw(DescriptionStyles.base, DescriptionStyles[game.mode])}>
+		{#key game.mode}
 			<p
 				class="col-start-1 row-start-1 overflow-y-auto"
 				in:fly={{
@@ -81,7 +81,7 @@
 				}}
 				out:fly={{ duration: GLOBAL_ANIMATION_DURATION, x: 75 }}
 			>
-				{ModeDescs[game.gameMode]}
+				{ModeDescs[game.mode]}
 			</p>
 		{/key}
 	</div>

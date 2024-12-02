@@ -1,12 +1,32 @@
 import { useContext } from '$lib/utils/context';
+import type { PrettyReturnType } from '$lib/utils/Prettify';
+import { FiniteStateMachine } from 'runed';
 
-export type GameStage = 'LOADING' | 'INTRO' | 'MENU' | 'LOBBY';
+export type GameStates = 'idle' | 'lobby';
+export type GameEvents = 'start';
 
-export type GameMode = 'Classic' | 'Salvo' | 'Bonus' | 'Special';
+export type GameLogic = PrettyReturnType<typeof setGameLogic>;
 
-export const [initGameLogic, useGameLogic] = useContext(Symbol('GameLogic Context'), () => {
+export type GameModes = 'Classic' | 'Salvo' | 'Bonus' | 'Special';
+
+export const [setGameLogic, useGameLogic] = useContext(Symbol('GameLogic Context'), () => {
+	const STATE = new FiniteStateMachine<GameStates, GameEvents>('idle', {
+		idle: {
+			start: 'lobby'
+		},
+		lobby: {}
+	});
+
 	class GameLogic {
-		gameMode: GameMode = $state('Classic');
+		get state() {
+			return STATE.current;
+		}
+
+		mode: GameModes = $state('Classic');
+
+		createLobby() {
+			STATE.send('start');
+		}
 	}
 
 	return new GameLogic();

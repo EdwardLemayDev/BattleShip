@@ -1,1 +1,1 @@
-export const tw = (...classes: (string | false)[]) => classes.filter((v) => v !== false).join(' ');
+export { twMerge as tw } from 'tailwind-merge';

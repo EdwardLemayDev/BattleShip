@@ -27,9 +27,7 @@
 <script lang="ts" generics="ValuesT extends string">
 	let { value, fallback, ...snippets }: SwitchProps<ValuesT> = $props();
 
-	const snippetCase = $derived.by(() => {
-		return (snippets as unknown as SwitchSnippets<ValuesT>)[value];
-	});
+	const snippetCase = $derived((snippets as unknown as Partial<ValueSnippets<ValuesT>>)[value]);
 </script>
 
 {#if snippetCase}
@@ -37,5 +35,5 @@
 {:else if fallback}
 	{@render fallback(value)}
 {:else}
-	{console.warn(`Invalid Switch state : ${value}`)}
+	{console.error(new Error(`Missing snippet for <Switch value="${value}" />`))}
 {/if}
