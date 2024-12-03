@@ -1,11 +1,20 @@
+import type { PrettyReturnType } from '$lib/utils/Prettify';
 import { sleep } from '$lib/utils/sleep';
 import { FiniteStateMachine } from 'runed';
 
 export type IntroStates = 'pending' | 'svelte' | 'tailwindcss' | 'author';
 export type IntroEvents = 'start' | 'next' | 'done';
 
-export function initIntro({ onDone, delay }: { onDone: () => void; delay: number }) {
-	let introCompleted = false;
+export type IntroLogic = PrettyReturnType<typeof setIntroLogic>;
+
+export function setIntroLogic({
+	onIntroDone: introDone,
+	delay
+}: {
+	onIntroDone: () => void;
+	delay: number;
+}) {
+	let introCompleted = $state(false);
 
 	async function queue(event: IntroEvents, ...args: unknown[]) {
 		await sleep(delay);
@@ -15,7 +24,7 @@ export function initIntro({ onDone, delay }: { onDone: () => void; delay: number
 
 	function done() {
 		introCompleted = true;
-		onDone();
+		introDone();
 	}
 
 	const STATE = new FiniteStateMachine<IntroStates, IntroEvents>('pending', {
@@ -46,21 +55,19 @@ export function initIntro({ onDone, delay }: { onDone: () => void; delay: number
 		}
 	});
 
-	class Intro {
+	return {
 		get state() {
 			return STATE.current;
-		}
+		},
 		get completed() {
 			return introCompleted;
-		}
+		},
 
-		start() {
+		start: () => {
 			STATE.send('start');
-		}
-		skip() {
+		},
+		skip: () => {
 			STATE.send('done');
 		}
-	}
-
-	return new Intro();
+	};
 }

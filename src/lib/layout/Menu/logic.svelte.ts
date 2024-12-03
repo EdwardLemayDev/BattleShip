@@ -1,11 +1,14 @@
+import type { PrettyReturnType } from '$lib/utils/Prettify';
 import { FiniteStateMachine } from 'runed';
 
 export type MenuStates = 'home' | 'join' | 'settings' | 'about';
 export type MenuEvents = 'open' | 'back';
 
+export type MenuLogic = PrettyReturnType<typeof setMenuLogic>;
+
 export type MenuOptions = Exclude<MenuStates, 'home'>;
 
-export function initMenu() {
+export function setMenuLogic() {
 	const back: MenuStates = 'home';
 
 	const STATE = new FiniteStateMachine<MenuStates, MenuEvents>('home', {
@@ -17,18 +20,16 @@ export function initMenu() {
 		about: { back }
 	});
 
-	class Menu {
+	return {
 		get page() {
 			return STATE.current;
-		}
+		},
 
-		open(option: MenuOptions) {
+		open: (option: MenuOptions) => {
 			STATE.send('open', option);
-		}
-		back() {
+		},
+		back: () => {
 			STATE.send('back');
 		}
-	}
-
-	return new Menu();
+	};
 }

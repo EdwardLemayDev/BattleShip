@@ -50,6 +50,6 @@ export const [setCoreLogic, useCoreLogic] = useContext(
 				game.createLobby();
 				STATE.send('start');
 			}
-		} as const;
+		};
 	}
 );

@@ -4,7 +4,7 @@
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
 	import { useCoreLogic } from '$lib/logic/Core.svelte';
 	import { blur } from 'svelte/transition';
-	import { initMenu, type MenuStates } from './logic.svelte';
+	import { setMenuLogic, type MenuStates } from './logic.svelte';
 
 	const MENU_TITLE: Record<MenuStates, string> = {
 		home: 'Battleship',
@@ -19,7 +19,7 @@
 
 <script lang="ts">
 	const core = useCoreLogic();
-	const menu = initMenu();
+	const menu = setMenuLogic();
 
 	const title = $derived(MENU_TITLE[menu.page]);
 </script>

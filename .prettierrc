@@ -12,5 +12,5 @@
 			}
 		}
 	],
-	"tailwindFunctions": ["tw"]
+	"tailwindFunctions": ["cva", "cx"]
 }

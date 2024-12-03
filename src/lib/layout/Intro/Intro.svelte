@@ -4,7 +4,7 @@
 	import { useThrottle } from '$lib/utils/throttle';
 	import { onMount } from 'svelte';
 	import { blur, fly } from 'svelte/transition';
-	import { initIntro, type IntroStates } from './logic.svelte';
+	import { setIntroLogic, type IntroStates } from './logic.svelte';
 
 	const INTRO_META: Record<
 		IntroStates,
@@ -42,8 +42,8 @@
 
 <script lang="ts">
 	const core = useCoreLogic();
-	const intro = initIntro({
-		onDone() {
+	const intro = setIntroLogic({
+		onIntroDone() {
 			core.introDone();
 		},
 		delay: INTRO_ANIMATION_DELAY
