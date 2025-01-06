@@ -1,13 +1,14 @@
 <script lang="ts" module>
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import { useGameLogic, type GameModes } from '$lib/logic/Game.svelte';
+	import { useGameLogic } from '$lib/logic/Game.svelte';
+	import type { Mode } from '$lib/logic/Mode/Mode';
 	import { tw } from '$lib/utils/tw';
 	import { cva } from 'class-variance-authority';
 	import { fly } from 'svelte/transition';
 
-	const GameModeList: GameModes[] = ['Classic', 'Salvo', 'Bonus', 'Special'];
+	const GameModeList: Mode.Name[] = ['Classic', 'Salvo', 'Bonus', 'Special'];
 
-	const ModeDescs: Record<GameModes, string> = {
+	const ModeDescs: Record<Mode.Name, string> = {
 		Classic: 'Classic description. This is a quick description of the game mode selected.',
 		Salvo: 'Salvo description. This is a quick description of the game mode selected.',
 		Bonus: 'Bonus description. This is a quick description of the game mode selected.',
@@ -72,10 +73,10 @@
 		{
 			variants: {
 				mode: {
-					Classic: 'border-sky-900 text-sky-100 selection:bg-sky-700/50',
-					Salvo: 'border-blue-900 text-blue-100 selection:bg-blue-700/50',
-					Bonus: 'border-indigo-900 text-indigo-100 selection:bg-indigo-700/50',
-					Special: 'border-violet-900 text-violet-100 selection:bg-violet-700/50'
+					Classic: 'border-sky-900 text-sky-100',
+					Salvo: 'border-blue-900 text-blue-100',
+					Bonus: 'border-indigo-900 text-indigo-100',
+					Special: 'border-violet-900 text-violet-100'
 				}
 			}
 		}
@@ -86,11 +87,9 @@
 	const game = useGameLogic();
 </script>
 
-<div class="flex w-full flex-col gap-3.5 rounded-lg border border-neutral-800 p-3.5">
-	<h2 class="w-full select-none text-center text-2xl font-bold tracking-wider text-neutral-400">
-		Missions
-	</h2>
-	<div class="grid select-none grid-cols-4 gap-1">
+<div class="flex w-full select-none flex-col gap-3.5 rounded-lg border border-neutral-800 p-3.5">
+	<h2 class="w-full text-center text-2xl font-bold tracking-wider text-neutral-400">Missions</h2>
+	<div class="grid grid-cols-4 gap-1">
 		{#each GameModeList as mode}
 			<label class="grid cursor-pointer grid-cols-1 grid-rows-1">
 				<input
@@ -116,7 +115,7 @@
 				}}
 				out:fly={{ duration: GLOBAL_ANIMATION_DURATION, x: 75 }}
 			>
-				{ModeDescs[game.mode]}
+				{ModeDescs[game.mode as Mode.Name]}
 			</p>
 		{/key}
 	</div>

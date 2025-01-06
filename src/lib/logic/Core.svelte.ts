@@ -2,35 +2,44 @@ import { dev } from '$app/environment';
 import type { DevLogic } from '$lib/logic/Dev.svelte';
 import { useContext } from '$lib/utils/context';
 import type { PrettyReturnType } from '$lib/utils/Prettify';
-import { FiniteStateMachine } from 'runed';
+import { FiniteStateMachine, type ActionFn } from 'runed';
 import type { GameLogic } from './Game.svelte';
 
 export type CoreStates = 'loading' | 'intro' | 'menu' | 'game';
-export type CoreEvents = 'loaded' | 'done' | 'start';
+export type CoreEvents = 'loaded' | 'done' | `lobby_${'new'}` | 'quit';
+export type CoreAction = ActionFn<CoreStates>;
 
 export type CoreLogic = PrettyReturnType<typeof setCoreLogic>;
 
 export const [setCoreLogic, useCoreLogic] = useContext(
-	Symbol('Core Context'),
+	Symbol(),
 	(devLogic: DevLogic, game: GameLogic) => {
+		const dev_loaded: CoreAction = () => {
+			if (devLogic?.skipIntro) {
+				return dev_done();
+			}
+			return 'intro';
+		};
+
+		const dev_done: CoreAction = () => {
+			return devLogic?.autoLobby ? lobby_new() : 'menu';
+		};
+
+		const lobby_new: CoreAction = () => {
+			game.send('new');
+			return 'game';
+		};
+
 		const STATE = new FiniteStateMachine<CoreStates, CoreEvents>('loading', {
-			loading: {
-				loaded: dev
-					? () => {
-							if (devLogic?.skipIntro) {
-								return devLogic.autoLobby ? 'game' : 'menu';
-							}
-							return 'intro';
-						}
-					: 'intro'
-			},
-			intro: {
-				done: dev ? () => (devLogic?.autoLobby ? 'game' : 'menu') : 'menu'
-			},
-			menu: {
-				start: 'game'
-			},
-			game: {}
+			loading: { loaded: dev ? dev_loaded : 'intro' },
+			intro: { done: dev ? dev_done : 'menu' },
+			menu: { lobby_new },
+			game: {
+				quit: () => {
+					game.send('reset');
+					return 'menu';
+				}
+			}
 		});
 
 		return {
@@ -46,9 +55,12 @@ export const [setCoreLogic, useCoreLogic] = useContext(
 				STATE.send('done');
 			},
 
+			quitGame: () => {
+				STATE.send('quit');
+			},
+
 			createLobby: () => {
-				game.createLobby();
-				STATE.send('start');
+				STATE.send('lobby_new');
 			}
 		};
 	}

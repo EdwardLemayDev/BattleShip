@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	import Switch from '$lib/components/Switch.svelte';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
-	import DevMenu from '$lib/layout/DevMenu.svelte';
+	import DevMenu from '$lib/layout/Dev/DevMenu.svelte';
 	import Game from '$lib/layout/Game/Game.svelte';
 	import Intro from '$lib/layout/Intro/Intro.svelte';
 	import Menu from '$lib/layout/Menu/Menu.svelte';
@@ -13,9 +13,7 @@
 <script lang="ts">
 	const core = useCoreLogic();
 
-	onMount(() => {
-		core.loaded();
-	});
+	onMount(core.loaded);
 </script>
 
 <svelte:head>
@@ -26,7 +24,7 @@
 	{#key core.state}
 		<div
 			class="absolute inset-0 grid place-items-center overflow-hidden"
-			in:fade={{ duration: GLOBAL_ANIMATION_DURATION, delay: GLOBAL_ANIMATION_DURATION / 2 }}
+			in:fade={{ duration: GLOBAL_ANIMATION_DURATION, delay: GLOBAL_ANIMATION_DURATION * 0.75 }}
 			out:fade={{ duration: GLOBAL_ANIMATION_DURATION }}
 		>
 			<Switch value={core.state}>

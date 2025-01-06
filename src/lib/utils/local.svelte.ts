@@ -1,12 +1,19 @@
 import { on } from 'svelte/events';
 
-export function syncLocalStorage<DataT>(key: string, get: () => DataT, set: (data: DataT) => void) {
+export function syncLocalStorage<DataT>(
+	key: string,
+	get: () => DataT | undefined,
+	set: (data: DataT) => void
+) {
 	if (typeof localStorage === 'undefined') return;
 
 	const initialLocal = fromJSON<DataT>(getLocal(key));
 	if (initialLocal) set(initialLocal);
 
-	$effect(() => saveLocal(key, toJSON(get())));
+	$effect(() => {
+		const data = get();
+		if (data) saveLocal(key, toJSON(data));
+	});
 	$effect(() =>
 		on(window, 'storage', ({ key: eventKey, newValue, storageArea }) => {
 			if (eventKey !== key || !newValue || storageArea !== localStorage) return;

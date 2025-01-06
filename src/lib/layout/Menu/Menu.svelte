@@ -14,7 +14,7 @@
 	};
 
 	const LOCAL_ANIMATION_DURATION = GLOBAL_ANIMATION_DURATION * 0.75;
-	const LOCAL_ANIMATION_DELAY = LOCAL_ANIMATION_DURATION * 0.4;
+	const LOCAL_ANIMATION_DELAY = LOCAL_ANIMATION_DURATION / 2;
 </script>
 
 <script lang="ts">
@@ -39,37 +39,11 @@
 			<Switch value={menu.page}>
 				{#snippet home()}
 					<!-- New Game will change from Menu to Lobby instead of being a page -->
-					<MenuButton
-						size="lg"
-						onclick={() => {
-							core.createLobby();
-						}}>New Game</MenuButton
-					>
-					<MenuButton
-						size="lg"
-						onclick={() => {
-							menu.open('join');
-						}}
-					>
-						Join Game
-					</MenuButton>
+					<MenuButton size="lg" onclick={core.createLobby}>New Game</MenuButton>
+					<MenuButton size="lg" onclick={() => menu.open('join')}>Join Game</MenuButton>
 					<!-- Might change Settings to be a component to be accessible during game -->
-					<MenuButton
-						size="lg"
-						onclick={() => {
-							menu.open('settings');
-						}}
-					>
-						Settings
-					</MenuButton>
-					<MenuButton
-						size="lg"
-						onclick={() => {
-							menu.open('about');
-						}}
-					>
-						About
-					</MenuButton>
+					<MenuButton size="lg" onclick={() => menu.open('settings')}>Settings</MenuButton>
+					<MenuButton size="lg" onclick={() => menu.open('about')}>About</MenuButton>
 				{/snippet}
 
 				{#snippet join()}
@@ -80,12 +54,7 @@
 						<p>[GAME CODE INPUT]</p>
 					</div>
 					<div class="grid grid-cols-2 gap-1">
-						<MenuButton
-							accent="danger"
-							onclick={() => {
-								menu.back();
-							}}>Cancel</MenuButton
-						>
+						<MenuButton accent="danger" onclick={menu.back}>Cancel</MenuButton>
 						<MenuButton accent="success">Join</MenuButton>
 					</div>
 				{/snippet}
@@ -104,14 +73,7 @@
 						<p>[SETTINGS OPTIONS]</p>
 					</div>
 					<div class="grid grid-cols-2 gap-1">
-						<MenuButton
-							accent="danger"
-							onclick={() => {
-								menu.back();
-							}}
-						>
-							Cancel
-						</MenuButton>
+						<MenuButton accent="danger" onclick={menu.back}>Cancel</MenuButton>
 						<MenuButton accent="success">Save</MenuButton>
 					</div>
 				{/snippet}
@@ -130,13 +92,7 @@
 							doloribus quis quisquam eius quaerat in nihil.
 						</p>
 					</div>
-					<MenuButton
-						onclick={() => {
-							menu.back();
-						}}
-					>
-						Back
-					</MenuButton>
+					<MenuButton onclick={menu.back}>Back</MenuButton>
 				{/snippet}
 			</Switch>
 		</div>

@@ -1,12 +1,13 @@
 <script lang="ts" module>
 	import { dev } from '$app/environment';
-	import MenuToggle from '$lib/components/MenuToggle.svelte';
 	import { useCoreLogic } from '$lib/logic/Core.svelte';
 	import { useDevLogic } from '$lib/logic/Dev.svelte';
 	import { useGameLogic } from '$lib/logic/Game.svelte';
 </script>
 
 <script lang="ts">
+	import Toggle from './Toggle.svelte';
+
 	const Content = dev ? devSnippet : undefined;
 </script>
 
@@ -24,7 +25,7 @@
 	{/snippet}
 
 	{#snippet MenuData(title: string, data?: any)}
-		<p class="flex gap-1 px-1">
+		<p class="flex gap-3 px-1">
 			<span>{title}:</span>
 			{#if data}
 				<span class="grow text-center font-bold">{data}</span>
@@ -49,29 +50,54 @@
 			</button>
 			{#if devLogic.menuOpened}
 				<div class="flex flex-col items-stretch gap-1 px-2">
-					<MenuToggle bind:value={devLogic.skipIntro}>
-						{#snippet children(value)}
-							<span>Skip Intro:</span>
-							<span class="font-bold underline">
-								{value ? 'On' : 'Off'}
-							</span>
-						{/snippet}
-					</MenuToggle>
-					<MenuToggle bind:value={devLogic.autoLobby}>
-						{#snippet children(value)}
-							<span>Auto Lobby:</span>
-							<span class="font-bold underline">
-								{value ? 'On' : 'Off'}
-							</span>
-						{/snippet}
-					</MenuToggle>
+					<Toggle
+						bind:value={devLogic.skipIntro}
+						toggle={(current) => !current}
+						format={(value) => (value ? 'On' : 'Off')}
+					>
+						Skip Intro
+					</Toggle>
+					<Toggle
+						bind:value={devLogic.autoLobby}
+						toggle={(current) => !current}
+						format={(value) => (value ? 'On' : 'Off')}
+					>
+						Auto Lobby
+					</Toggle>
+					<Toggle bind:value={devLogic.playerView} toggle={(current) => (current === 1 ? 2 : 1)}>
+						Player view
+					</Toggle>
+
 					{@render MenuSeparator()}
 					{@render MenuLabel('Core')}
 					{@render MenuData('State', core.state)}
+
 					{@render MenuSeparator()}
 					{@render MenuLabel('Game')}
 					{@render MenuData('State', game.state)}
+					{@render MenuData('Type', game.role)}
 					{@render MenuData('Mode', game.mode)}
+					{@render MenuData('Turn', game.turn)}
+					<!-- 
+					{@render MenuSeparator()}
+					{@render MenuLabel('P1')}
+					{@render MenuData('State', game.p1.state)}
+					{@render MenuData('Name', game.p1.name)}
+					{@render MenuData('Type', game.p1.type)}
+					{@render MenuData(
+						'Preview',
+						`${game.p1.fleet.preview.selected} : ${game.p1.fleet.preview.direction}`
+					)}
+
+					{@render MenuSeparator()}
+					{@render MenuLabel('P2')}
+					{@render MenuData('State', game.p2.state)}
+					{@render MenuData('Name', game.p2.name)}
+					{@render MenuData('Type', game.p2.type)}
+					{@render MenuData(
+						'Preview',
+						`${game.p2.fleet.preview.selected} : ${game.p2.fleet.preview.direction}`
+					)} -->
 				</div>
 			{/if}
 		</div>

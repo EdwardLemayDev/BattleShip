@@ -43,13 +43,11 @@
 <script lang="ts">
 	const core = useCoreLogic();
 	const intro = setIntroLogic({
-		onIntroDone() {
-			core.introDone();
-		},
+		onIntroDone: core.introDone,
 		delay: INTRO_ANIMATION_DELAY
 	});
 
-	onMount(() => intro.start());
+	onMount(intro.start);
 
 	let showSkipMessage = $state(false);
 	const meta = $derived(INTRO_META[intro.state]);
