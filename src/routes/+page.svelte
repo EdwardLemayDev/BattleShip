@@ -1,51 +1,53 @@
 <script lang="ts" module>
-	import { dev } from '$app/environment';
-	import StageRoot from '$lib/components/StageRoot.svelte';
-	import DevMenu from '$lib/layout/DevMenu.svelte';
-	import Intro from '$lib/layout/Intro.svelte';
-	import Loading from '$lib/layout/Loading.svelte';
-	import Lobby from '$lib/layout/Lobby/Lobby.svelte';
-	import Menu from '$lib/layout/Menu.svelte';
-	import { DevConfig } from '$lib/logic/DevConfig.svelte';
-	import { GameLogic } from '$lib/logic/Game.svelte';
+	import Switch from '$lib/components/Switch.svelte';
+	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
+	import DevMenu from '$lib/layout/Dev/DevMenu.svelte';
+	import Game from '$lib/layout/Game/Game.svelte';
+	import Intro from '$lib/layout/Intro/Intro.svelte';
+	import Menu from '$lib/layout/Menu/Menu.svelte';
+	import { useCoreLogic } from '$lib/logic/Core.svelte';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 </script>
 
 <script lang="ts">
-	const game = new GameLogic();
-	const devConfig = new DevConfig();
+	const core = useCoreLogic();
 
-	const CurrentStage = $derived.by(() => {
-		switch (game.stage) {
-			case 'LOADING':
-				return Loading;
-			case 'INTRO':
-				return Intro;
-			case 'MENU':
-				return Menu;
-			case 'LOBBY':
-				return Lobby;
-		}
-	});
-
-	onMount(() => {
-		game.loaded();
-
-		if (dev) {
-			if (devConfig.skipIntro) game.introCompleted();
-			if (devConfig.newLobby) game.createLobby();
-		}
-	});
+	onMount(core.loaded);
 </script>
 
 <svelte:head>
 	<title>Battleship</title>
 </svelte:head>
 
-{#if dev}
-	<DevMenu />
-{/if}
+<main class="absolute inset-0 bg-neutral-950 text-neutral-50">
+	{#key core.state}
+		<div
+			class="absolute inset-0 grid place-items-center overflow-hidden"
+			in:fade={{ duration: GLOBAL_ANIMATION_DURATION, delay: GLOBAL_ANIMATION_DURATION * 0.75 }}
+			out:fade={{ duration: GLOBAL_ANIMATION_DURATION }}
+		>
+			<Switch value={core.state}>
+				{#snippet loading()}
+					<noscript class="flex w-full max-w-2xl flex-col gap-6">
+						<h1 class="text-center text-4xl font-extrabold">
+							<span class="text-yellow-500">!!</span>
+							<span>Limited browser capabilities</span>
+							<span class="text-yellow-500">!!</span>
+						</h1>
+						<p class="text-xl font-bold">
+							JavaScript is currently disabled or unavailable. Please enable it or try using a
+							different browser.
+						</p>
+					</noscript>
+				{/snippet}
 
-<StageRoot>
-	<CurrentStage />
-</StageRoot>
+				{#snippet intro()}<Intro />{/snippet}
+				{#snippet menu()}<Menu />{/snippet}
+				{#snippet game()}<Game />{/snippet}
+			</Switch>
+		</div>
+	{/key}
+
+	<DevMenu />
+</main>
