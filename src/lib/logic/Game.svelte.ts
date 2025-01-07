@@ -1,8 +1,10 @@
 import { useContext } from '$lib/utils/context';
 import { SvelteStateMachine } from '$lib/utils/SvelteStateMachine.svelte';
 import { initGlobal } from './Global';
+import { Bonus } from './Mode/Bonus.svelte';
 import { Classic } from './Mode/Classic.svelte';
 import type { Mode } from './Mode/Mode';
+import { Salvo } from './Mode/Salvo.svelte';
 import { EasyBot } from './Player/EasyBot.svelte';
 import { LocalPlayer } from './Player/Local.svelte';
 import type { Player } from './Player/Player.svelte';
@@ -144,6 +146,16 @@ export class GameLogic extends SvelteStateMachine<Game.States, Game.Events> {
 		switch (name) {
 			case 'Classic': {
 				this.#gameMode = new Classic(context);
+				break;
+			}
+
+			case 'Salvo': {
+				this.#gameMode = new Salvo(context);
+				break;
+			}
+
+			case 'Bonus': {
+				this.#gameMode = new Bonus(context);
 				break;
 			}
 
