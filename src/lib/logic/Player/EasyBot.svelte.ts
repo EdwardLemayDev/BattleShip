@@ -39,7 +39,7 @@ export class EasyBot implements Player {
 				y = getRandomInt(0, Player.Grid.SIZE - 1);
 			} while (!this.#logic.grid.canAttack(x, y));
 
-			global.emit('shoot', { playerId: id, x, y });
+			setTimeout(() => global.emit('shoot', { playerId: id, x, y }), getRandomInt(500, 1000));
 		});
 
 		global.on('shoot', ({ playerId, x, y }) => {

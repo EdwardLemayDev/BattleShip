@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import { base } from '$app/paths';
 	import { GLOBAL_ANIMATION_DURATION } from '$lib/const';
 	import { useCoreLogic } from '$lib/logic/Core.svelte';
 	import { useThrottle } from '$lib/utils/throttle';
@@ -90,7 +91,7 @@
 					class="absolute inset-0 grid place-items-center"
 					transition:blur={{ duration: INTRO_ANIMATION_DURATION }}
 				>
-					<img class="w-full" {src} {alt} draggable="false" />
+					<img class="w-full" src={base + src} {alt} draggable="false" />
 				</div>
 			{/key}
 		</div>

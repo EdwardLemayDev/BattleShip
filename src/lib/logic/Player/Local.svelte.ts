@@ -1,5 +1,7 @@
+import { getLocal, saveLocal } from '$lib/utils/local.svelte';
 import { SvelteStateMachine } from '$lib/utils/SvelteStateMachine.svelte';
 import { useThrottle } from '$lib/utils/throttle';
+import { useDebounce } from 'runed';
 import type { Global } from '../Global';
 import { Player } from './Player.svelte';
 
@@ -10,11 +12,29 @@ export class LocalPlayer
 	readonly id: Player.Id;
 	readonly #logic = new Player.Logic();
 
-	name: string = $state('');
+	#name: string | null = $state(null);
 	lives: number = $state(5);
 
 	gameWon: boolean = $state(false);
 	enemyLives: number = $state(5);
+
+	get name() {
+		if (this.#name !== null) return this.#name;
+
+		this.#name = getLocal('player_name') ?? '';
+		return this.#name;
+	}
+
+	#updateLocal = useDebounce((newName: string) => {
+		saveLocal('player_name', newName);
+	}, 500);
+
+	set name(newName: string) {
+		if (newName === this.#name) return;
+
+		this.#name = newName;
+		this.#updateLocal(newName);
+	}
 
 	get ships() {
 		return this.#logic.fleet.ships;

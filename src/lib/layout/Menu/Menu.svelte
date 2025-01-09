@@ -38,11 +38,10 @@
 		<div class="flex min-h-72 w-full max-w-md flex-col gap-2">
 			<Switch value={menu.page}>
 				{#snippet home()}
-					<!-- New Game will change from Menu to Lobby instead of being a page -->
-					<MenuButton size="lg" onclick={core.createLobby}>New Game</MenuButton>
-					<MenuButton size="lg" onclick={() => menu.open('join')}>Join Game</MenuButton>
+					<MenuButton size="lg" onclick={core.createLobby}>Play</MenuButton>
+					<!-- <MenuButton size="lg" onclick={() => menu.open('join')}>Join Game</MenuButton> -->
 					<!-- Might change Settings to be a component to be accessible during game -->
-					<MenuButton size="lg" onclick={() => menu.open('settings')}>Settings</MenuButton>
+					<!-- <MenuButton size="lg" onclick={() => menu.open('settings')}>Settings</MenuButton> -->
 					<MenuButton size="lg" onclick={() => menu.open('about')}>About</MenuButton>
 				{/snippet}
 
@@ -80,17 +79,18 @@
 
 				{#snippet about()}
 					<div
-						class="mb-2 flex flex-col gap-2 rounded-md border border-neutral-800 p-4 text-lg font-bold"
+						class="mb-2 flex flex-col gap-6 rounded-md border border-neutral-800 p-6 text-lg font-bold text-neutral-300 selection:bg-neutral-700"
 					>
 						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero unde at corrupti
-							mollitia doloremque ducimus est, delectus neque praesentium quo aperiam enim vitae
-							accusamus. Recusandae beatae repellat dolor velit molestiae.
+							This Battleship game is a passion project inspired by the classic Hasbro electronic
+							Battleship game. Currently in its early stages, it brings back missions like Classic,
+							Salvo, and Bonus, with future plans for Special missions.
 						</p>
 						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis vel cupiditate
-							doloribus quis quisquam eius quaerat in nihil.
+							While features like customizable grid sizes, custom fleets, smarter AI opponents, and
+							online multiplayer are planned, they are not available yet.
 						</p>
+						<p>Stay tuned for future updates as development continues!</p>
 					</div>
 					<MenuButton onclick={menu.back}>Back</MenuButton>
 				{/snippet}
