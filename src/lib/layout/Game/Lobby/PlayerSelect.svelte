@@ -56,7 +56,7 @@
 				type="text"
 				name="Ally name"
 				id="ally_name"
-				placeholder="- Fleet Name -"
+				placeholder="- Player Name -"
 				maxlength="25"
 				autocomplete="off"
 				bind:value={player1.name}

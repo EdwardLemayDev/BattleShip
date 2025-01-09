@@ -1,5 +1,7 @@
 import { useContext } from '$lib/utils/context';
+import { getLocal, saveLocal } from '$lib/utils/local.svelte';
 import { SvelteStateMachine } from '$lib/utils/SvelteStateMachine.svelte';
+import { useDebounce } from 'runed';
 import { initGlobal } from './Global';
 import { Bonus } from './Mode/Bonus.svelte';
 import { Classic } from './Mode/Classic.svelte';
@@ -50,7 +52,7 @@ export class GameLogic extends SvelteStateMachine<Game.States, Game.Events> {
 
 					this.setPlayer(1, 'Local');
 					this.setPlayer(2, 'Easy');
-					this.setMode('Classic');
+					this.setMode((getLocal('game_mode') as Mode.Name) ?? 'Classic');
 
 					return 'lobby';
 				}
@@ -138,7 +140,13 @@ export class GameLogic extends SvelteStateMachine<Game.States, Game.Events> {
 		}
 	}
 
+	#updateLocalMode = useDebounce((name: Mode.Name) => {
+		saveLocal('game_mode', name);
+	}, 500);
+
 	setMode(name: Mode.Name | null) {
+		if (name) this.#updateLocalMode(name);
+
 		this.global.reset('mode');
 
 		const context = this.global.context('mode');
