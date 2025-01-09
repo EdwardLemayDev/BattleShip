@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"build:deploy": "pnpm build && pnpx gh-pages -d build --nojekyll",
+		"build:deploy": "pnpm build && pnpx gh-pages -d build --nojekyll --cname battleship.edle.ca",
 		"build:preview": "pnpm build && pnpm preview",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
