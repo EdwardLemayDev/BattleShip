@@ -20,7 +20,7 @@
 	<title>Battleship</title>
 </svelte:head>
 
-<main class="absolute inset-0 bg-neutral-950 text-neutral-50">
+<main class="absolute inset-0">
 	{#key core.state}
 		<div
 			class="absolute inset-0 grid place-items-center overflow-hidden"

@@ -9,7 +9,7 @@
 	const GameModeList: Mode.Name[] = ['Classic', 'Salvo', 'Bonus'];
 	// , 'Special'
 
-	const ModeDescs: Record<Mode.Name, string> = {
+	export const ModeDescs: Record<Mode.Name, string> = {
 		Classic:
 			'The simplest way to play, ideal for honing your naval combat strategy skills. Players take turns firing one shot at a time, aiming to hit or miss the opponent’s ships. The winner is the first to sink the entire enemy fleet.',
 		Salvo:

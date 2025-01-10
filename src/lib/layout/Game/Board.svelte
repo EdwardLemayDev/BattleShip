@@ -7,6 +7,7 @@
 	import { useGameLogic } from '$lib/logic/Game.svelte';
 	import { LocalPlayer } from '$lib/logic/Player/Local.svelte';
 	import { blur, fade, scale } from 'svelte/transition';
+	import { ModeDescs } from './Lobby/GameModeSelect.svelte';
 	import ShipSegment from './ShipSegment.svelte';
 	import ShotPin from './ShotPin.svelte';
 </script>
@@ -15,6 +16,8 @@
 	const core = useCoreLogic();
 	const game = useGameLogic();
 	const devLogic = useDevLogic();
+
+	let helpMenuOpen = $state(false);
 
 	const player = $derived.by(() => {
 		if (dev && devLogic?.playerView) return game.getPlayer(devLogic.playerView);
@@ -27,15 +30,94 @@
 	transition:blur={{ duration: GLOBAL_ANIMATION_DURATION }}
 >
 	{#if player instanceof LocalPlayer}
-		<h1 class="text-center text-2xl font-black tracking-widest text-neutral-400">
-			{game.mode} Mission
-		</h1>
+		<div class="relative z-10">
+			<h1 class="text-center text-2xl font-black tracking-widest text-neutral-400">
+				{game.mode} Mission
+			</h1>
+			<button
+				class="absolute right-2 top-1/2 size-7 -translate-y-1/2 rounded-full border-2 border-neutral-700 bg-neutral-800 p-0.5 text-neutral-500 transition-all hover:border-blue-700 hover:text-blue-200 active:scale-95"
+				title="Help"
+				aria-label="Help"
+				type="button"
+				onclick={() => (helpMenuOpen = !helpMenuOpen)}
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+					{#if helpMenuOpen}
+						<path
+							transition:fade={{ duration: GLOBAL_ANIMATION_DURATION }}
+							fill="currentColor"
+							d="m12 13.4l-4.9 4.9q-.275.275-.7.275t-.7-.275t-.275-.7t.275-.7l4.9-4.9l-4.9-4.9q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l4.9 4.9l4.9-4.9q.275-.275.7-.275t.7.275t.275.7t-.275.7L13.4 12l4.9 4.9q.275.275.275.7t-.275.7t-.7.275t-.7-.275z"
+						/>
+					{:else}
+						<path
+							transition:fade={{ duration: GLOBAL_ANIMATION_DURATION }}
+							fill="currentColor"
+							d="M14.6 8.075q0-1.075-.712-1.725T12 5.7q-.725 0-1.312.313t-1.013.912q-.4.575-1.088.663T7.4 7.225q-.35-.325-.387-.8t.237-.9q.8-1.2 2.038-1.862T12 3q2.425 0 3.938 1.375t1.512 3.6q0 1.125-.475 2.025t-1.75 2.125q-.925.875-1.25 1.363T13.55 14.6q-.1.6-.513 1t-.987.4t-.987-.387t-.413-.963q0-.975.425-1.787T12.5 11.15q1.275-1.125 1.688-1.737t.412-1.338M12 22q-.825 0-1.412-.587T10 20t.588-1.412T12 18t1.413.588T14 20t-.587 1.413T12 22"
+						/>
+					{/if}
+				</svg>
+			</button>
+			{#if helpMenuOpen}
+				<div
+					transition:scale={{ duration: GLOBAL_ANIMATION_DURATION, start: 0.5 }}
+					class="absolute right-0 top-full pt-3"
+				>
+					<ul
+						class="flex flex-col gap-3 rounded-md border-2 border-neutral-800 bg-neutral-900 p-4 text-neutral-200"
+					>
+						{#snippet dot()}
+							<div class="size-2 rounded-full bg-current"></div>
+						{/snippet}
+
+						<p class="py-1 text-center text-2xl font-bold tracking-wider text-neutral-400">
+							Description
+						</p>
+						{#if game.mode}
+							<p class="text-justify">{ModeDescs[game.mode]}</p>
+						{/if}
+
+						<p class="py-1 text-center text-2xl font-bold tracking-wider text-neutral-400">Tips</p>
+						<li class="flex items-center gap-2">
+							{@render dot()}
+							<p>
+								During <span class="font-semibold text-cyan-600 underline">Setup</span>, place your
+								fleet on the lower board by clicking a tile.
+							</p>
+						</li>
+						<li class="flex items-center gap-2">
+							{@render dot()}
+							<p>
+								Use the scroll wheel to change the
+								<span class="font-semibold underline">orientation</span> of the selected ship.
+							</p>
+						</li>
+						<li class="flex items-center gap-2">
+							{@render dot()}
+							<p>
+								Click a tile on the upper board to <span class="font-semibold underline">fire</span>
+								a shot at that location.
+							</p>
+						</li>
+						<li class="flex items-center gap-2">
+							{@render dot()}
+							<p>
+								A <span class="font-semibold text-red-600 underline">red</span> marker indicates a
+								hit, while a
+								<span class="font-semibold text-white underline">white</span> marker means a miss.
+							</p>
+						</li>
+					</ul>
+				</div>
+			{/if}
+		</div>
 		<div class="flex items-center justify-between p-2 text-lg font-semibold">
 			<p>{player.name}'s Fleet</p>
 			{#if game.state === 'playing'}
 				<p class="transition-colors {game.turn === player.id ? 'text-green-600' : 'text-red-600'}">
 					{game.turn === player.id ? 'Attacking' : 'Defending'}
 				</p>
+			{:else if game.state === 'setup'}
+				<p class="text-cyan-600">Setup</p>
 			{/if}
 		</div>
 		<div class="grid grid-flow-col gap-2">
