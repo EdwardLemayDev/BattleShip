@@ -217,7 +217,7 @@ export namespace Player {
 			['Battleship', 4],
 			['Destroyer', 3],
 			['Submarine', 3],
-			['Cruiser', 2]
+			['Patrol', 2]
 		] as const;
 
 		#selectedId: number | null = $state(null);
